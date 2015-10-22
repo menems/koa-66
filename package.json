@@ -1,0 +1,34 @@
+{
+  "name": "koa-66",
+  "version": "0.1.0",
+  "description": "Router for the next koa release with promised support",
+  "main": "index.js",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/menems/koa-66.git"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "koa",
+    "router",
+    "es2015",
+    "asyncFunctions"
+  ],
+  "author": "Arnaud Veronie <blaz@menems.net>",
+  "license": "MIT",
+  "dependencies": {
+    "debug": "^2.2.0",
+    "koa-compose": "koajs/compose.git#es2016",
+    "methods": "^1.1.1",
+    "path-to-regexp": "^1.2.1"
+  },
+  "devDependencies": {
+    "mocha": "^2.3.3",
+    "should": "^7.1.1"
+  },
+  "engines": {
+    "node": "> 4"
+  }
+}
