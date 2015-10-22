@@ -17,25 +17,19 @@ module.exports = class Koa66 {
     }
 
     register(method, path, middleware) {
+        let keys = [];
+        let regexp = pathToRegexp(path, keys);
+
         var route = {
             path: path,
-            middleware: middleware
+            middleware: middleware,
+            regexp: regexp,
+            paramNames: keys
         };
 
         // use middleware
-        if (!method) {
-            debug('Register use %s', path);
-            route.regexp = new RegExp(path + '(.*)');
-        }
-        // reel routes
-        else {
-            debug('Register route %s %s', method, path);
-            let keys = [];
-            let regexp = pathToRegexp(path, keys);
+        if (method)
             route.method = method.toUpperCase();
-            route.regexp = regexp;
-            route.paramNames = keys;
-        }
 
         this.stacks.push(route);
         return this;
@@ -73,7 +67,7 @@ module.exports = class Koa66 {
 
             let _m = [];
             routes.forEach((r) => {
-                if (r.path) {
+                if (r.path && r.paramNames) {
                     ctx.params = this.params = this.parseParams(r.paramNames, ctx.path.match(r.regexp).slice(1), this.params)
                 }
                 _m.push(r.middleware);
@@ -100,7 +94,7 @@ module.exports = class Koa66 {
     match(method, path) {
         debug('Route %s %s', method, path);
         return this.stacks.filter((s) => {
-            debug('Test with %s %s, matched: %s', s.method, s.regexp);
+            debug('Test with %s %s, matched: %s', s.method, s.regexp, s.regexp.test(path));
             if (s.regexp.test(path) && (!s.method || s.method === method))
                 return s;
         });
