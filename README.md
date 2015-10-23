@@ -8,6 +8,12 @@ Inspired by [koa-router](https://github.com/alexmingoia/koa-router)
 
 - __node v4__ or higher
 
+## Instalation
+
+```bash
+# npm install koa-66
+```
+
 ## Usage
 
 ```js
