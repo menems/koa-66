@@ -1,12 +1,22 @@
+'use strict';
+
 const debug = require('debug')('koa-66');
 const assert = require('assert');
 const methods = require('methods');
 const pathToRegexp = require('path-to-regexp');
 const compose = require('koa-compose');
 
+/**
+ * Expose Koa66 class.
+ */
 module.exports = class Koa66 {
 
-    constructor(options) {
+    /**
+     * Initialise a new Koa66
+     *
+     * @api public
+     */
+    constructor() {
         this.stacks = [];
 
         methods.forEach(method => {
@@ -16,25 +26,15 @@ module.exports = class Koa66 {
         });
     }
 
-    register(method, path, middleware) {
-        let keys = [];
-        let regexp = pathToRegexp(path, keys);
 
-        var route = {
-            path: path,
-            middleware: middleware,
-            regexp: regexp,
-            paramNames: keys
-        };
-
-        // use middleware
-        if (method)
-            route.method = method.toUpperCase();
-
-        this.stacks.push(route);
-        return this;
-    }
-
+    /**
+     * Mount a Koa66 instance on a prefix path
+     *
+     * @param  {string} prefix
+     * @param  {Object} router  Koa66 instance
+     * @return {Object}         Koa66 instance
+     * @api public
+     */
     mount(prefix, router) {
         assert(router.constructor.name === 'Koa66', 'require a Koa66 instance');
 
@@ -45,6 +45,14 @@ module.exports = class Koa66 {
         return this;
     }
 
+    /**
+     * Use given middleware before route callback
+     *
+     * @param  {String|Function} path
+     * @param  {Function} fn
+     * @return {Object} Koa66 instance
+     * @api public
+     */
     use(path, fn) {
         if (typeof path === 'function') {
             fn = path;
@@ -53,6 +61,12 @@ module.exports = class Koa66 {
         return this.register(false, path, fn);
     }
 
+    /**
+     * Expose middleware for koa
+     *
+     * @return {Function}
+     * @api public
+     */
     routes() {
         return (ctx, next) => {
             let routes = this.match(ctx.method, ctx.path);
@@ -79,6 +93,42 @@ module.exports = class Koa66 {
         };
     }
 
+    /**
+     * Register a new middlewate, http route or use middeware
+     *
+     * @param  {string} method
+     * @param  {string} path
+     * @param  {Function} middleware
+     * @return {Object} Koa66 instance
+     * @api private
+     */
+    register(method, path, middleware) {
+        let keys = [];
+        let regexp = pathToRegexp(path, keys);
+
+        var route = {
+            path: path,
+            middleware: middleware,
+            regexp: regexp,
+            paramNames: keys
+        };
+
+        if (method)
+            route.method = method.toUpperCase();
+
+        this.stacks.push(route);
+        return this;
+    }
+
+    /**
+     * parse params from route
+     *
+     * @param  {[Object]} paramNames
+     * @param  {[String]} captures
+     * @param  {[Object]} existingParams
+     * @return {[Object]}
+     * @api private
+     */
     parseParams(paramNames, captures, existingParams) {
         let params = existingParams || {};
 
@@ -91,6 +141,14 @@ module.exports = class Koa66 {
         return params;
     };
 
+    /**
+     * math middleware from a specific path and method
+     *
+     * @param  {String} method
+     * @param  {String} path
+     * @return {[Object]}
+     * @api private
+     */
     match(method, path) {
         debug('Route %s %s', method, path);
         return this.stacks.filter((s) => {
