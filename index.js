@@ -26,7 +26,6 @@ module.exports = class Koa66 {
         });
     }
 
-
     /**
      * Mount a Koa66 instance on a prefix path
      *
