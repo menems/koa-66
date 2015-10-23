@@ -55,9 +55,9 @@ module.exports = class Koa66 {
     use(path, fn) {
         if (typeof path === 'function') {
             fn = path;
-            path = '/';
+            path = null;
         }
-        return this.register(false, path, fn);
+        return this.register(false, path || '(.*)' , fn);
     }
 
     /**
@@ -102,6 +102,7 @@ module.exports = class Koa66 {
      * @api private
      */
     register(method, path, middleware) {
+        debug('Register %s %s', method, path);
         let keys = [];
         let regexp = pathToRegexp(path, keys);
 

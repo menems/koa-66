@@ -45,3 +45,9 @@ app.use(mainRouter.routes());
 
 app.listen(1664);
 ```
+
+## Test
+```bash
+# npm test
+
+```

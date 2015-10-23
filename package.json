@@ -1,6 +1,6 @@
 {
   "name": "koa-66",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "Router for the next koa release with promised support",
   "main": "index.js",
   "repository": {
@@ -8,7 +8,7 @@
     "url": "https://github.com/menems/koa-66.git"
   },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "mocha --require should -R spec test/index.js"
   },
   "keywords": [
     "koa",
@@ -25,9 +25,10 @@
     "path-to-regexp": "^1.2.1"
   },
   "devDependencies": {
-    "babel": "^5.8.23",
+    "koa": "koajs/koa#master",
     "mocha": "^2.3.3",
-    "should": "^7.1.1"
+    "should": "^7.1.1",
+    "supertest": "^1.1.0"
   },
   "engines": {
     "node": "> 4"
