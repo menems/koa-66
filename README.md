@@ -26,11 +26,11 @@ const mainRouter  = new Router();
 
 router.use('/', async function(ctx, next) {
     ctx.a = " world";
-    await next(ctx);
+    await next();
 });
 
 router.get('/', (ctx, next) => {
-    return next(ctx).then(() => {
+    return next().then(() => {
         ctx.body += ctx.a;
    })
 });

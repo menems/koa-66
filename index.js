@@ -87,7 +87,7 @@ module.exports = class Koa66 {
             });
 
             return compose(_m)(ctx).then(function() {
-                return next(ctx);
+                return next();
             });
         };
     }
