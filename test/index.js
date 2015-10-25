@@ -5,6 +5,39 @@ const should = require('should');
 
 describe('Koa-66', function(){
 
+    it('path is required', function(done){
+        const router = new Router();
+        try {
+            router.get();
+            done(Error());
+        }catch(e) {
+            e.message.should.equal('path is required');
+            done();
+        }
+    });
+
+    it('middleware must be present', function(done){
+        const router = new Router();
+        try {
+            router.get('/');
+            done(Error());
+        }catch(e) {
+            e.message.should.equal('middleware is required');
+            done();
+        }
+    });
+
+    it('middleware must be a function', function(done){
+        const router = new Router();
+        try {
+            router.get('/', {});
+            done(Error());
+        }catch(e) {
+            e.message.should.equal('middleware must be a function');
+            done();
+        }
+    });
+
     it('.routes() should be a valid middleware factory', function(done){
         var router = new Router();
         router.should.have.property('routes');
@@ -234,6 +267,49 @@ describe('Koa-66', function(){
             .expect(200)
             .expect({one:'one', two: 'two'})
             .end(done);
+    });
+
+    it('multiple middleware as array', function(done){
+        const app = new Koa();
+        const router = new Router();
+
+        router.get('/', [function(ctx, next){
+            ctx.body = 'hello';
+            next();
+        }, function(ctx) {
+            ctx.body += 'world'
+        }]);
+
+
+        app.use(router.routes());
+
+        request(app.listen())
+            .get('/')
+            .expect(200)
+            .expect('helloworld')
+            .end(done);
+    });
+
+    it('multiple middleware as arguments', function(done){
+        const app = new Koa();
+        const router = new Router();
+
+        router.get('/', function t1(ctx, next){
+            ctx.body = 'hello';
+            next();
+        }, function t2(ctx) {
+            ctx.body += 'world'
         });
+
+
+        app.use(router.routes());
+
+        request(app.listen())
+            .get('/')
+            .expect(200)
+            .expect('helloworld')
+            .end(done);
+    });
+
 
 });

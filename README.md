@@ -13,6 +13,14 @@ Inspired by [koa-router](https://github.com/alexmingoia/koa-router)
 ```bash
 # npm install koa-66
 ```
+## Features
+
+- Express style http verbs methods
+- Express style use function
+- mount instance routes on specific path
+- promised-based function
+- multiple middleware as arguments
+- multiple middleware as array
 
 ## Usage
 

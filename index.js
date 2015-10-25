@@ -2,7 +2,6 @@
 
 const debug = require('debug')('koa-66');
 const assert = require('assert');
-const methods = require('methods');
 const pathToRegexp = require('path-to-regexp');
 const compose = require('koa-compose');
 
@@ -19,10 +18,25 @@ module.exports = class Koa66 {
     constructor() {
         this.stacks = [];
 
-        methods.forEach(method => {
-            this[method] = (path, middleware) => {
-                return this.register(method, path, middleware);
-            };
+        this.methods = [
+            'options',
+            'head',
+            'get',
+            'post',
+            'put',
+            'patch',
+            'delete'
+        ];
+
+        this.methods.forEach(method => {
+            this[method] = function() {
+                const args = Array.prototype.slice.call(arguments);
+
+                assert(typeof args[0] === 'string', 'path is required');
+
+                args.unshift(method);
+                return this.register.apply(this, args);
+            }.bind(this);
         });
     }
 
@@ -36,11 +50,7 @@ module.exports = class Koa66 {
      */
     mount(prefix, router) {
         assert(router.constructor.name === 'Koa66', 'require a Koa66 instance');
-
-        router.stacks.forEach((s) => {
-            this.register(s.method, prefix + s.path, s.middleware);
-        });
-
+        router.stacks.forEach( s => this.register(s.method, prefix + s.path, s.middleware));
         return this;
     }
 
@@ -68,27 +78,22 @@ module.exports = class Koa66 {
      */
     routes() {
         return (ctx, next) => {
-            let routes = this.match(ctx.method, ctx.path);
+            const routes = this.match(ctx.method, ctx.path);
 
             // check if a route is reached
-            let hasRoute = routes.filter((r) => {
-                return r.method;
-            });
-
-            if (!hasRoute.length)
+            if(!routes.filter(r => r.method).length)
                 return next(ctx);
 
-            let _m = [];
-            routes.forEach((r) => {
+
+            const _m = [];
+            routes.forEach(r => {
                 if (r.path && r.paramNames) {
                     ctx.params = this.params = this.parseParams(r.paramNames, ctx.path.match(r.regexp).slice(1), this.params)
                 }
                 _m.push(r.middleware);
             });
 
-            return compose(_m)(ctx).then(function() {
-                return next();
-            });
+            return compose(_m)(ctx).then(() => next());
         };
     }
 
@@ -101,22 +106,35 @@ module.exports = class Koa66 {
      * @return {Object} Koa66 instance
      * @api private
      */
-    register(method, path, middleware) {
+    register(method, path) {
         debug('Register %s %s', method, path);
-        let keys = [];
-        let regexp = pathToRegexp(path, keys);
+        const middlewares = Array.prototype.slice.call(arguments, 2);
 
-        var route = {
-            path: path,
-            middleware: middleware,
-            regexp: regexp,
-            paramNames: keys
-        };
+        assert(middlewares.length, 'middleware is required');
 
-        if (method)
-            route.method = method.toUpperCase();
+        middlewares.forEach(m => {
+            if ( Array.isArray(m)) {
+                m.forEach( _m => this.register(method, path, _m));
+                return this;
+            }
 
-        this.stacks.push(route);
+            assert(typeof m === 'function', 'middleware must be a function');
+
+            const keys = [];
+            const regexp = pathToRegexp(path, keys);
+
+            var route = {
+                path: path,
+                middleware: m,
+                regexp: regexp,
+                paramNames: keys
+            };
+
+            if (method)
+                route.method = method.toUpperCase();
+
+            this.stacks.push(route);
+        });
         return this;
     }
 
@@ -130,14 +148,16 @@ module.exports = class Koa66 {
      * @api private
      */
     parseParams(paramNames, captures, existingParams) {
-        let params = existingParams || {};
+        const params = existingParams || {};
+        const len = captures.length;
 
-        for (let len = captures.length, i = 0; i < len; i++) {
+        for (let i = 0; i < len; i++) {
             if (paramNames[i]) {
                 let c = captures[i];
                 params[paramNames[i].name] = c ? safeDecodeURIComponent(c) : c;
             }
         }
+
         return params;
     };
 
@@ -151,7 +171,7 @@ module.exports = class Koa66 {
      */
     match(method, path) {
         debug('Route %s %s', method, path);
-        return this.stacks.filter((s) => {
+        return this.stacks.filter(s => {
             debug('Test with %s %s, matched: %s', s.method, s.regexp, s.regexp.test(path));
             if (s.regexp.test(path) && (!s.method || s.method === method))
                 return s;
