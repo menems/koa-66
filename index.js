@@ -174,27 +174,11 @@ module.exports = class Koa66 {
         for (let i = 0; i < len; i++) {
             if (paramNames[i]) {
                 let c = captures[i];
-                params[paramNames[i].name] = c ? safeDecodeURIComponent(c) : c;
+                params[paramNames[i].name] = c ? decodeURIComponent(c) : c;
             }
         }
 
         return params;
     };
 
-}
-
-/**
- * Safe decodeURIComponent, won't throw any error.
- * If `decodeURIComponent` error happen, just return the original value.
- *
- * @param {String} text
- * @returns {String} URL decode original string.
- * @private
- */
-function safeDecodeURIComponent(text) {
-    try {
-        return decodeURIComponent(text);
-    } catch (e) {
-        return text;
-    }
 }
