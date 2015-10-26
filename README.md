@@ -7,6 +7,7 @@ Inspired by [koa-router](https://github.com/alexmingoia/koa-router)
 ## why?
 Why not using [koa-route](https://github.com/koajs/route)?
 - Is a litle bit minimalistic
+
 Why not using [koa-router](https://github.com/alexmingoia/koa-router)
 - For the moment koa-router is broken on the new koa release [#186](https://github.com/alexmingoia/koa-router/issues/186)
 - I think koa-router do too much things, redirect, named route, url and need too add another middleware for allowed methods
