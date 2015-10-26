@@ -49,7 +49,7 @@ module.exports = class Koa66 {
      * @api public
      */
     mount(prefix, router) {
-        assert(router.constructor.name === 'Koa66', 'require a Koa66 instance');
+        assert(router instanceof Koa66, 'require a Koa66 instance');
         router.stacks.forEach( s => this.register(s.method, prefix + s.path, s.middleware));
         return this;
     }
