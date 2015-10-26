@@ -29,6 +29,7 @@ Why not using [koa-router](https://github.com/alexmingoia/koa-router)
 - mount instance routes on specific path
 - multiple middleware as arguments
 - multiple middleware as array
+- 501 and 405 status
 
 ## Usage
 

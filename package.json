@@ -1,6 +1,6 @@
 {
   "name": "koa-66",
-  "version": "0.2.2",
+  "version": "0.3.0",
   "description": "Router for the next koa release with promised support",
   "main": "index.js",
   "repository": {
