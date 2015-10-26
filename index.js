@@ -82,7 +82,7 @@ module.exports = class Koa66 {
 
             // check if a route is reached
             if(!routes.filter(r => r.method).length)
-                return next(ctx);
+                return next();
 
 
             const _m = [];
