@@ -25,7 +25,8 @@ module.exports = class Koa66 {
             'post',
             'put',
             'patch',
-            'delete'
+            'delete',
+            'del'
         ];
 
         this.methods.forEach(method => {
