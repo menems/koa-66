@@ -79,11 +79,37 @@ module.exports = class Koa66 {
      */
     routes() {
         return (ctx, next) => {
-            //match du path
-            let routes = this.stacks.filter(s => s.regexp.test(ctx.path));
 
-            // check if a route is reached
-            if(!routes.filter(r => r.method).length) return next();
+            const middlewares = [];
+            const allowed = [];
+            let matched = false;
+            this.stacks.forEach( route => {
+                // path test
+                if(!route.regexp.test(ctx.path)) return;
+
+                // use middlewares
+                if (!route.method) {
+                    middlewares.push(route.middleware);
+                    if (route.paramNames)
+                        ctx.params = this.parseParams(route.paramNames, ctx.path.match(route.regexp).slice(1))
+                    return;
+                }
+
+                if ( route.method === 'GET')
+                    allowed.push('HEAD');
+                allowed.push(route.method);
+
+                // method test
+                if ((route.method === ctx.method) || (ctx.method === 'HEAD' && route.method === 'GET')) {
+                    matched = true;
+                    middlewares.push(route.middleware);
+                    if (route.paramNames)
+                        ctx.params = this.parseParams(route.paramNames, ctx.path.match(route.regexp).slice(1))
+                }
+            });
+
+            // only use middleware
+            if (!allowed.length) return next();
 
             // 501
             if(this.methods.indexOf(ctx.method.toLowerCase()) === -1) {
@@ -91,30 +117,16 @@ module.exports = class Koa66 {
                 return next();
             }
 
-            const allowed = [];
-            // match method
-            routes = routes.filter(r => {
-                if (r.method) {
-                    allowed.push(r.method);
-                    return r.method === ctx.method;
-                }
-                return true;
-            });
-
-            if (!routes.length) {
+            // 405
+            if (!matched) {
                 ctx.status = 405;
-                ctx.set('Allow', allowed);
+                ctx.set('Allow', allowed.filter( (value, index, self) => {
+                    return self.indexOf(value) === index;
+                }));
                 return next();
             }
 
-            const _m = routes.map(r => {
-                if (r.path && r.paramNames) {
-                    ctx.params = this.params = this.parseParams(r.paramNames, ctx.path.match(r.regexp).slice(1), this.params)
-                }
-                return r.middleware;
-            });
-
-            return compose(_m)(ctx).then(() => next());
+            return compose(middlewares)(ctx).then(() => next());
         };
     }
 
@@ -168,18 +180,17 @@ module.exports = class Koa66 {
      * @return {[Object]}
      * @api private
      */
-    parseParams(paramNames, captures, existingParams) {
-        const params = existingParams || {};
+    parseParams(paramNames, captures) {
         const len = captures.length;
+        this.params = this.params || {};
 
         for (let i = 0; i < len; i++) {
             if (paramNames[i]) {
                 let c = captures[i];
-                params[paramNames[i].name] = c ? decodeURIComponent(c) : c;
+                this.params[paramNames[i].name] = c ? decodeURIComponent(c) : c;
             }
         }
-
-        return params;
+        return this.params;
     };
 
 }

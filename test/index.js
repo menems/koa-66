@@ -328,6 +328,8 @@ describe('Koa-66', function(){
         const app = new Koa();
         const router = new Router();
 
+        router.use(ctx=>{});
+        router.get('/', ctx => {});
         router.get('/', ctx => {});
         router.put('/', ctx => {});
         app.use(router.routes());
@@ -337,9 +339,24 @@ describe('Koa-66', function(){
             .expect(405)
             .end(function(err, res) {
                 if (err) return done(err);
-                res.header.should.have.property('allow', 'GET, PUT');
+                res.header.should.have.property('allow', 'HEAD, GET, PUT');
                 done();
             });
     });
+
+    it('if no HEAD method registered and have GET should 200', function(done){
+        const app = new Koa();
+        const router = new Router();
+
+        router.get('/', ctx => {
+            ctx.body = 'pouet';
+        });
+        app.use(router.routes());
+
+        request(app.listen())
+            .head('/')
+            .expect(200)
+            .end(done);
+        });
 
 });
