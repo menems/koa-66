@@ -1,8 +1,15 @@
 # koa-66
 
-Router middleware for [koa](https://github.com/koajs/koa/tree/async-function) 2, probably the next release
+Router middleware for the next release of [koa](https://github.com/koajs/koa).
 
 Inspired by [koa-router](https://github.com/alexmingoia/koa-router)
+
+## why?
+Why not using [koa-route](https://github.com/koajs/route)?
+- Is a litle bit minimalistic
+Why not using [koa-router](https://github.com/alexmingoia/koa-router)
+- For the moment koa-router is broken on the new koa release [#186](https://github.com/alexmingoia/koa-router/issues/186)
+- I think koa-router do too much things, redirect, named route, url and need too add another middleware for allowed methods
 
 ## Requirement
 
@@ -17,8 +24,8 @@ Inspired by [koa-router](https://github.com/alexmingoia/koa-router)
 
 - Express style http verbs methods
 - Express style use function
-- mount instance routes on specific path
 - promised-based function
+- mount instance routes on specific path
 - multiple middleware as arguments
 - multiple middleware as array
 
@@ -32,7 +39,7 @@ const app = new Koa();
 const router = new Router();
 const mainRouter  = new Router();
 
-router.use('/', async function(ctx, next) {
+router.use(async function(ctx, next) {
     ctx.a = " world";
     await next();
 });
