@@ -311,5 +311,35 @@ describe('Koa-66', function(){
             .end(done);
     });
 
+    it('should return 501 on not implemented methods', function(done){
+        const app = new Koa();
+        const router = new Router();
+
+        router.get('/', ctx => {});
+        app.use(router.routes());
+
+        request(app.listen())
+            .search('/')
+            .expect(501)
+            .end(done);
+    });
+
+    it('should return 405 on not allowed method', function(done){
+        const app = new Koa();
+        const router = new Router();
+
+        router.get('/', ctx => {});
+        router.put('/', ctx => {});
+        app.use(router.routes());
+
+        request(app.listen())
+            .post('/')
+            .expect(405)
+            .end(function(err, res) {
+                if (err) return done(err);
+                res.header.should.have.property('allow', 'GET, PUT');
+                done();
+            });
+    });
 
 });

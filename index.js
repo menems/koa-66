@@ -78,19 +78,39 @@ module.exports = class Koa66 {
      */
     routes() {
         return (ctx, next) => {
-            const routes = this.match(ctx.method, ctx.path);
+            //match du path
+            let routes = this.stacks.filter(s => s.regexp.test(ctx.path));
 
             // check if a route is reached
-            if(!routes.filter(r => r.method).length)
+            if(!routes.filter(r => r.method).length) return next();
+
+            // 501
+            if(this.methods.indexOf(ctx.method.toLowerCase()) === -1) {
+                ctx.status = 501;
                 return next();
+            }
 
+            const allowed = [];
+            // match method
+            routes = routes.filter(r => {
+                if (r.method) {
+                    allowed.push(r.method);
+                    return r.method === ctx.method;
+                }
+                return true;
+            });
 
-            const _m = [];
-            routes.forEach(r => {
+            if (!routes.length) {
+                ctx.status = 405;
+                ctx.set('Allow', allowed);
+                return next();
+            }
+
+            const _m = routes.map(r => {
                 if (r.path && r.paramNames) {
                     ctx.params = this.params = this.parseParams(r.paramNames, ctx.path.match(r.regexp).slice(1), this.params)
                 }
-                _m.push(r.middleware);
+                return r.middleware;
             });
 
             return compose(_m)(ctx).then(() => next());
@@ -161,22 +181,6 @@ module.exports = class Koa66 {
         return params;
     };
 
-    /**
-     * math middleware from a specific path and method
-     *
-     * @param  {String} method
-     * @param  {String} path
-     * @return {[Object]}
-     * @api private
-     */
-    match(method, path) {
-        debug('Route %s %s', method, path);
-        return this.stacks.filter(s => {
-            debug('Test with %s %s, matched: %s', s.method, s.regexp, s.regexp.test(path));
-            if (s.regexp.test(path) && (!s.method || s.method === method))
-                return s;
-        });
-    }
 }
 
 /**
