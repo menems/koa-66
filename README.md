@@ -5,12 +5,13 @@ Router middleware for the next release of [koa](https://github.com/koajs/koa).
 Inspired by [koa-router](https://github.com/alexmingoia/koa-router)
 
 ## why?
-Why not using [koa-route](https://github.com/koajs/route)?
-- Is a litle bit minimalistic
+Why not use [koa-route](https://github.com/koajs/route)?
 
-Why not using [koa-router](https://github.com/alexmingoia/koa-router)
-- For the moment koa-router is broken on the new koa release [#186](https://github.com/alexmingoia/koa-router/issues/186)
-- I think koa-router do too much things, redirect, named route, url and need too add another middleware for allowed methods
+- Is a little minimalistic
+
+Why not use [koa-router](https://github.com/alexmingoia/koa-router)?
+
+- For now koa-router is broken with the new koa release [#186](https://github.com/alexmingoia/koa-router/issues/186)
 
 ## Requirement
 
@@ -23,10 +24,9 @@ Why not using [koa-router](https://github.com/alexmingoia/koa-router)
 ```
 ## Features
 
-- Express style http verbs methods
-- Express style use function
-- promised-based function
-- mount instance routes on specific path
+- Express like http verbs methods
+- Express like use function
+- mount instance on specific path
 - multiple middleware as arguments
 - multiple middleware as array
 - 501 and 405 status
