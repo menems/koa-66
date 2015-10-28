@@ -64,11 +64,11 @@ module.exports = class Koa66 {
      * @api public
      */
     use(path, fn) {
-        if (typeof path === 'function') {
-            fn = path;
-            path = null;
-        }
-        return this.register(false, path || '(.*)' , fn);
+        const args = Array.prototype.slice.call(arguments);
+        if (typeof args[0] === 'function')
+            args.unshift('(.*)');
+        args.unshift(false);
+        return this.register.apply(this, args);
     }
 
     /**

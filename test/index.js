@@ -310,6 +310,27 @@ describe('Koa-66', function(){
             .expect('helloworld')
             .end(done);
     });
+    it('multiple middleware on use functions', function(done){
+        const app = new Koa();
+        const router = new Router();
+
+        router.use((ctx, next) => {
+            ctx.body = 'hello';
+            next();
+        }, ctx => {
+            ctx.body += 'world'
+        });
+
+        router.get('/', () => {});
+
+        app.use(router.routes());
+
+        request(app.listen())
+            .get('/')
+            .expect(200)
+            .expect('helloworld')
+            .end(done);
+    });
 
     it('should return 501 on not implemented methods', function(done){
         const app = new Koa();
