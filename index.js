@@ -5,10 +5,21 @@ const assert = require('assert');
 const pathToRegexp = require('path-to-regexp');
 const compose = require('koa-compose');
 
+const methods = [
+    'options',
+    'head',
+    'get',
+    'post',
+    'put',
+    'patch',
+    'delete',
+    'del'
+];
+
 /**
  * Expose Koa66 class.
  */
-module.exports = class Koa66 {
+const Koa66 = module.exports = class Koa66 {
 
     /**
      * Initialise a new Koa66
@@ -17,28 +28,7 @@ module.exports = class Koa66 {
      */
     constructor() {
         this.stacks = [];
-
-        this.methods = [
-            'options',
-            'head',
-            'get',
-            'post',
-            'put',
-            'patch',
-            'delete',
-            'del'
-        ];
-
-        this.methods.forEach(method => {
-            this[method] = function() {
-                const args = Array.prototype.slice.call(arguments);
-
-                assert(typeof args[0] === 'string', 'path is required');
-
-                args.unshift(method);
-                return this.register.apply(this, args);
-            }.bind(this);
-        });
+        this.methods = methods;
     }
 
     /**
@@ -51,7 +41,7 @@ module.exports = class Koa66 {
      */
     mount(prefix, router) {
         assert(router instanceof Koa66, 'require a Koa66 instance');
-        router.stacks.forEach( s => this.register(s.method, prefix + s.path, s.middleware));
+        router.stacks.forEach(s => this.register(s.method, prefix + s.path, s.middleware));
         return this;
     }
 
@@ -83,9 +73,9 @@ module.exports = class Koa66 {
             const middlewares = [];
             const allowed = [];
             let matched = false;
-            this.stacks.forEach( route => {
+            this.stacks.forEach(route => {
                 // path test
-                if(!route.regexp.test(ctx.path)) return;
+                if (!route.regexp.test(ctx.path)) return;
 
                 // use middlewares
                 if (!route.method) {
@@ -95,7 +85,7 @@ module.exports = class Koa66 {
                     return;
                 }
 
-                if ( route.method === 'GET')
+                if (route.method === 'GET')
                     allowed.push('HEAD');
                 allowed.push(route.method);
 
@@ -112,7 +102,7 @@ module.exports = class Koa66 {
             if (!allowed.length) return next();
 
             // 501
-            if(this.methods.indexOf(ctx.method.toLowerCase()) === -1) {
+            if (this.methods.indexOf(ctx.method.toLowerCase()) === -1) {
                 ctx.status = 501;
                 return next();
             }
@@ -120,7 +110,7 @@ module.exports = class Koa66 {
             // 405
             if (!matched) {
                 ctx.status = 405;
-                ctx.set('Allow', allowed.filter( (value, index, self) => {
+                ctx.set('Allow', allowed.filter((value, index, self) => {
                     return self.indexOf(value) === index;
                 }));
                 return next();
@@ -146,8 +136,8 @@ module.exports = class Koa66 {
         assert(middlewares.length, 'middleware is required');
 
         middlewares.forEach(m => {
-            if ( Array.isArray(m)) {
-                m.forEach( _m => this.register(method, path, _m));
+            if (Array.isArray(m)) {
+                m.forEach(_m => this.register(method, path, _m));
                 return this;
             }
 
@@ -194,3 +184,20 @@ module.exports = class Koa66 {
     };
 
 }
+
+/**
+ * Add http methods
+ *
+ * @param  {String}  path
+ * @return {[Functions]...}  middleware
+ */
+methods.forEach(method => {
+    Koa66.prototype[method] = function() {
+        const args = Array.prototype.slice.call(arguments);
+
+        assert(typeof args[0] === 'string', 'path is required');
+
+        args.unshift(method);
+        return this.register.apply(this, args);
+    };
+});
