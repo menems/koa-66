@@ -1,0 +1,38 @@
+v0.3.0 / 2015-10-26
+===================
+
+  * refactor routes() and add HEAD request
+  * add del to methods
+  * don't catch decodeURIComponent error
+  * Add 501 and 405
+
+v0.2.2 / 2015-10-26
+===================
+
+  * fix readme
+
+v0.2.1 / 2015-10-26
+===================
+
+  * More readme
+  * remove unnecessary context param
+  * Use instanceof instead of constructor.name
+  * remove methods dependencies + refactor + multiple routes and middlewares
+
+v0.1.3 / 2015-10-23
+===================
+
+  * fix: next call doesn't need ctx
+  * Add sync test
+  * Add install on readme
+  * add babel as dependencies for test
+  * Add eslint config
+  * Add comments
+
+v0.1.1 / 2015-10-22
+===================
+
+  * readme: add example
+  * fix: use regexp
+  * Initial commit
+
