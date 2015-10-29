@@ -109,6 +109,12 @@ const Koa66 = module.exports = class Koa66 {
 
             // 405
             if (!matched) {
+                // automatic OPTIONS response
+                if (ctx.method === 'OPTIONS') {
+                    ctx.status = 204
+                    return next();
+                }
+
                 ctx.status = 405;
                 ctx.set('Allow', allowed.filter((value, index, self) => {
                     return self.indexOf(value) === index;

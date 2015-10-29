@@ -378,6 +378,21 @@ describe('Koa-66', function(){
             .head('/')
             .expect(200)
             .end(done);
+    });
+
+    it('options methods has to respond with 204', function(done){
+        const app = new Koa();
+        const router = new Router();
+
+        router.get('/', ctx => {
+            ctx.body = 'pouet';
         });
+        app.use(router.routes());
+
+        request(app.listen())
+            .options('/')
+            .expect(204)
+            .end(done);
+    });
 
 });
