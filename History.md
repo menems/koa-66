@@ -1,3 +1,12 @@
+
+v0.4.0 / 2015-10-29
+===================
+
+  * Add History.md
+  * Add automatic options response
+  * fix: methods on prototype instead in constructor
+  * fix: multiple middleware on use functions
+  * readme update
 v0.3.0 / 2015-10-26
 ===================
 
