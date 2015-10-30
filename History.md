@@ -1,4 +1,14 @@
 
+v0.5.0 / 2015-10-30
+===================
+
+  * Readme changed
+  * fix: param() on children mount instance
+  * Replace assert by throw
+  * Add param() api
+  * Merge pull request #9 from alexanderneu/fix-parseParams
+  * fix: no use of this in parseParams
+
 v0.4.0 / 2015-10-29
 ===================
 
