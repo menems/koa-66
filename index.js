@@ -81,7 +81,7 @@ const Koa66 = module.exports = class Koa66 {
                 if (!route.method) {
                     middlewares.push(route.middleware);
                     if (route.paramNames)
-                        ctx.params = this.parseParams(route.paramNames, ctx.path.match(route.regexp).slice(1))
+                        ctx.params = this.parseParams(ctx.params, route.paramNames, ctx.path.match(route.regexp).slice(1))
                     return;
                 }
 
@@ -94,7 +94,7 @@ const Koa66 = module.exports = class Koa66 {
                     matched = true;
                     middlewares.push(route.middleware);
                     if (route.paramNames)
-                        ctx.params = this.parseParams(route.paramNames, ctx.path.match(route.regexp).slice(1))
+                        ctx.params = this.parseParams(ctx.params, route.paramNames, ctx.path.match(route.regexp).slice(1))
                 }
             });
 
@@ -176,17 +176,17 @@ const Koa66 = module.exports = class Koa66 {
      * @return {[Object]}
      * @api private
      */
-    parseParams(paramNames, captures) {
+    parseParams(params, paramNames, captures) {
         const len = captures.length;
-        this.params = this.params || {};
+        params = params || {};
 
         for (let i = 0; i < len; i++) {
             if (paramNames[i]) {
                 let c = captures[i];
-                this.params[paramNames[i].name] = c ? decodeURIComponent(c) : c;
+                params[paramNames[i].name] = c ? decodeURIComponent(c) : c;
             }
         }
-        return this.params;
+        return params;
     };
 
 }
