@@ -36,7 +36,7 @@ Why not use [koa-router](https://github.com/alexmingoia/koa-router)?
 ## Usage
 
 ```js
-onst Koa = require('koa');
+const Koa = require('koa');
 const Router = require('koa-66');
 const app = new Koa();
 
