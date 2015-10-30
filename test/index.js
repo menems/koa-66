@@ -3,42 +3,42 @@ const Koa = require('Koa');
 const request = require('supertest');
 const should = require('should');
 
-describe('Koa-66', function(){
+describe('Koa-66', function() {
 
-    it('path is required', function(done){
+    it('path is required', function(done) {
         const router = new Router();
         try {
             router.get();
             done(Error());
-        }catch(e) {
+        } catch (e) {
             e.message.should.equal('path is required');
             done();
         }
     });
 
-    it('middleware must be present', function(done){
+    it('middleware must be present', function(done) {
         const router = new Router();
         try {
             router.get('/');
             done(Error());
-        }catch(e) {
+        } catch (e) {
             e.message.should.equal('middleware is required');
             done();
         }
     });
 
-    it('middleware must be a function', function(done){
+    it('middleware must be a function', function(done) {
         const router = new Router();
         try {
             router.get('/', {});
             done(Error());
-        }catch(e) {
+        } catch (e) {
             e.message.should.equal('middleware must be a function');
             done();
         }
     });
 
-    it('.routes() should be a valid middleware factory', function(done){
+    it('.routes() should be a valid middleware factory', function(done) {
         var router = new Router();
         router.should.have.property('routes');
         router.routes.should.be.type('function');
@@ -48,11 +48,11 @@ describe('Koa-66', function(){
         done();
     });
 
-    it('200 with valid path and body', function(done){
+    it('200 with valid path and body', function(done) {
         const app = new Koa();
         const router = new Router();
 
-        router.get('/hello', function(ctx){
+        router.get('/hello', function(ctx) {
             ctx.body = 'world'
         });
 
@@ -65,15 +65,15 @@ describe('Koa-66', function(){
             .end(done);
     });
 
-    it('200 with complete body and multiple routes', function(done){
+    it('200 with complete body and multiple routes', function(done) {
         const app = new Koa();
         const router = new Router();
 
-        router.get('/hello', function(ctx, next){
+        router.get('/hello', function(ctx, next) {
             ctx.body = 'wor'
             next();
         });
-        router.get('/hello', function(ctx){
+        router.get('/hello', function(ctx) {
             ctx.body += 'ld'
         });
 
@@ -86,14 +86,14 @@ describe('Koa-66', function(){
             .end(done);
     });
 
-    it('multiple routes without next should stop', function(done){
+    it('multiple routes without next should stop', function(done) {
         const app = new Koa();
         const router = new Router();
 
-        router.get('/hello', function(ctx){
+        router.get('/hello', function(ctx) {
             ctx.body = 'wor'
         });
-        router.get('/hello', function(ctx){
+        router.get('/hello', function(ctx) {
             ctx.body += 'ld'
         });
 
@@ -106,7 +106,7 @@ describe('Koa-66', function(){
             .end(done);
     });
 
-    it('no routes should return 404', function(done){
+    it('no routes should return 404', function(done) {
         const app = new Koa();
         const router = new Router();
 
@@ -118,11 +118,11 @@ describe('Koa-66', function(){
             .end(done);
     });
 
-    it('only use should not be exec', function(done){
+    it('only use should not be exec', function(done) {
         const app = new Koa();
         const router = new Router();
 
-        router.use('/', function(ctx){
+        router.use('/', function(ctx) {
             ctx.body = 'wor'
         });
 
@@ -134,16 +134,16 @@ describe('Koa-66', function(){
             .end(done);
     });
 
-    it('use without path should be apply to all router object methods', function(done){
+    it('use without path should be apply to all router object methods', function(done) {
         const app = new Koa();
         const router = new Router();
 
-        router.use(function(ctx, next){
+        router.use(function(ctx, next) {
             ctx.body = 'wor'
             next();
         });
 
-        router.get('/hello', function(ctx){
+        router.get('/hello', function(ctx) {
             ctx.body += 'ld'
         });
 
@@ -156,12 +156,12 @@ describe('Koa-66', function(){
             .end(done);
     });
 
-    it('.mount should 200 with correct path', function(done){
+    it('.mount should 200 with correct path', function(done) {
         const app = new Koa();
         const router = new Router();
         const router2 = new Router();
 
-        router.get('/', function(ctx){
+        router.get('/', function(ctx) {
             ctx.body = 'world'
         });
 
@@ -176,12 +176,12 @@ describe('Koa-66', function(){
             .end(done);
     });
 
-    it('.mount should 404 with old path', function(done){
+    it('.mount should 404 with old path', function(done) {
         const app = new Koa();
         const router = new Router();
         const router2 = new Router();
 
-        router.get('/', function(ctx){
+        router.get('/', function(ctx) {
             ctx.body = 'world'
         });
 
@@ -195,17 +195,17 @@ describe('Koa-66', function(){
             .end(done);
     });
 
-    it('use .mount should be apply only on children', function(done){
+    it('use .mount should be apply only on children', function(done) {
         const app = new Koa();
         const router = new Router();
         const router2 = new Router();
 
-        router.use(function(ctx, next){
+        router.use(function(ctx, next) {
             ctx.body = 'hello'
             next();
         })
 
-        router.get('/', function(ctx){
+        router.get('/', function(ctx) {
             ctx.body += 'world'
         });
 
@@ -220,23 +220,23 @@ describe('Koa-66', function(){
             .end(done);
     });
 
-    it('use .mount should be apply only on children 2', function(done){
+    it('use .mount should be apply only on children 2', function(done) {
         const app = new Koa();
         const router = new Router();
         const router2 = new Router();
 
-        router.use(function(ctx, next){
+        router.use(function(ctx, next) {
             ctx.body = 'hello'
             next();
         })
 
-        router.get('/', function(ctx){
+        router.get('/', function(ctx) {
             ctx.body += 'world'
         });
 
-        router2.get('/', function(ctx){
+        router2.get('/', function(ctx) {
 
-            ctx.body +='pouet';
+            ctx.body += 'pouet';
         })
         router2.mount('/hello', router)
 
@@ -249,12 +249,12 @@ describe('Koa-66', function(){
             .end(done);
     });
 
-    it('url params', function(done){
+    it('url params', function(done) {
         const app = new Koa();
         const router = new Router();
         const router2 = new Router();
 
-        router.get('/:two/test', function(ctx){
+        router.get('/:two/test', function(ctx) {
             ctx.body = ctx.params;
         });
 
@@ -265,15 +265,18 @@ describe('Koa-66', function(){
         request(app.listen())
             .get('/one/two/test')
             .expect(200)
-            .expect({one:'one', two: 'two'})
+            .expect({
+                one: 'one',
+                two: 'two'
+            })
             .end(done);
     });
 
-    it('multiple middleware as array', function(done){
+    it('multiple middleware as array', function(done) {
         const app = new Koa();
         const router = new Router();
 
-        router.get('/', [function(ctx, next){
+        router.get('/', [function(ctx, next) {
             ctx.body = 'hello';
             next();
         }, function(ctx) {
@@ -290,11 +293,11 @@ describe('Koa-66', function(){
             .end(done);
     });
 
-    it('multiple middleware as arguments', function(done){
+    it('multiple middleware as arguments', function(done) {
         const app = new Koa();
         const router = new Router();
 
-        router.get('/', function t1(ctx, next){
+        router.get('/', function t1(ctx, next) {
             ctx.body = 'hello';
             next();
         }, function t2(ctx) {
@@ -310,7 +313,7 @@ describe('Koa-66', function(){
             .expect('helloworld')
             .end(done);
     });
-    it('multiple middleware on use functions', function(done){
+    it('multiple middleware on use functions', function(done) {
         const app = new Koa();
         const router = new Router();
 
@@ -332,7 +335,7 @@ describe('Koa-66', function(){
             .end(done);
     });
 
-    it('should return 501 on not implemented methods', function(done){
+    it('should return 501 on not implemented methods', function(done) {
         const app = new Koa();
         const router = new Router();
 
@@ -345,11 +348,11 @@ describe('Koa-66', function(){
             .end(done);
     });
 
-    it('should return 405 on not allowed method', function(done){
+    it('should return 405 on not allowed method', function(done) {
         const app = new Koa();
         const router = new Router();
 
-        router.use(ctx=>{});
+        router.use(ctx => {});
         router.get('/', ctx => {});
         router.get('/', ctx => {});
         router.put('/', ctx => {});
@@ -365,7 +368,7 @@ describe('Koa-66', function(){
             });
     });
 
-    it('if no HEAD method registered and have GET should 200', function(done){
+    it('if no HEAD method registered and have GET should 200', function(done) {
         const app = new Koa();
         const router = new Router();
 
@@ -380,7 +383,7 @@ describe('Koa-66', function(){
             .end(done);
     });
 
-    it('options methods has to respond with 204', function(done){
+    it('options methods has to respond with 204', function(done) {
         const app = new Koa();
         const router = new Router();
 
@@ -394,5 +397,93 @@ describe('Koa-66', function(){
             .expect(204)
             .end(done);
     });
+
+    // param() test taken from koa-router
+    it('param should be resolve', function(done) {
+        const app = new Koa();
+        const router = new Router();
+
+        router.param('id', (ctx, next, id) => {
+            ctx.test = id;
+            next();
+        });
+
+        router.get('/:id', ctx => {
+            ctx.body = ctx.test;
+        })
+        app.use(router.routes());
+
+        request(app.listen())
+            .get('/pouet')
+            .expect(200)
+            .expect('pouet')
+            .end(done);
+    });
+
+    it('runs parent parameter middleware for subrouter', function(done) {
+        var app = new Koa();
+        var router = new Router();
+        var subrouter = new Router();
+
+        subrouter.get('/:cid', (ctx) => {
+            ctx.body = {
+                id: ctx.a,
+                cid: ctx.params.cid
+            };
+        });
+
+        router
+            .param('id', (ctx, next, id) => {
+                ctx.a = id;
+                next();
+            })
+            .mount('/:id/children', subrouter);
+
+        app.use(router.routes());
+
+        request(app.listen())
+            .get('/pouet/children/2')
+            .expect(200)
+            .expect({
+                id : 'pouet',
+                'cid': '2'
+            })
+            .end(done);
+    });
+
+    it('runs parameter middleware in order of URL appearance', function(done) {
+      var app = new Koa();
+      var router = new Router();
+      router
+        .param('user', (ctx, next ,id) => {
+          ctx.user = { name: 'alex' };
+          if (ctx.ranFirst) {
+            ctx.user.ordered = 'parameters';
+          }
+          next();
+        })
+        .param('first', (ctx, next, id) => {
+          ctx.ranFirst = true;
+          if (ctx.user) {
+            ctx.ranFirst = false;
+          }
+          next();
+        })
+        .get('/:first/users/:user', ctx => {
+          ctx.body = ctx.user;
+        });
+        app.use(router.routes());
+
+        request(app.listen())
+
+      .get('/first/users/3')
+      .expect(200)
+      .expect({
+        name: 'alex',
+        ordered: 'parameters'
+      })
+      .end(done);
+    });
+
 
 });

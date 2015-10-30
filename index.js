@@ -61,6 +61,12 @@ const Koa66 = module.exports = class Koa66 {
         return this.register.apply(this, args);
     }
 
+    param(key, fn) {
+        assert(typeof key === 'string', 'require a string');
+        assert(typeof fn === 'function', 'require a function');
+        return this.register(false, '(.*)', key, fn);
+    }
+
     /**
      * Expose middleware for koa
      *
@@ -72,18 +78,25 @@ const Koa66 = module.exports = class Koa66 {
 
             const middlewares = [];
             const allowed = [];
-            let matched = false;
+            const paramMiddlewares = [];
+            let matched;
+
             this.stacks.forEach(route => {
                 // path test
                 if (!route.regexp.test(ctx.path)) return;
 
-                // use middlewares
-                if (!route.method) {
-                    middlewares.push(route.middleware);
-                    if (route.paramNames)
-                        ctx.params = this.parseParams(ctx.params, route.paramNames, ctx.path.match(route.regexp).slice(1))
-                    return;
-                }
+                if (route.paramNames)
+                    ctx.params = this.parseParams(ctx.params, route.paramNames, ctx.path.match(route.regexp).slice(1))
+
+                if (route.paramKey)
+                    return paramMiddlewares[route.paramKey] = (ctx, next) => {
+                        return (ctx.params[route.paramKey])
+                            ? route.middleware(ctx, next, ctx.params[route.paramKey])
+                            : next();
+                    };
+
+                if (!route.method)
+                    return middlewares.push(route.middleware);
 
                 if (route.method === 'GET')
                     allowed.push('HEAD');
@@ -93,10 +106,9 @@ const Koa66 = module.exports = class Koa66 {
                 if ((route.method === ctx.method) || (ctx.method === 'HEAD' && route.method === 'GET')) {
                     matched = true;
                     middlewares.push(route.middleware);
-                    if (route.paramNames)
-                        ctx.params = this.parseParams(ctx.params, route.paramNames, ctx.path.match(route.regexp).slice(1))
                 }
             });
+
 
             // only use middleware
             if (!allowed.length) return next();
@@ -122,7 +134,13 @@ const Koa66 = module.exports = class Koa66 {
                 return next();
             }
 
-            return compose(middlewares)(ctx).then(() => next());
+            const _params = [];
+            for(let i in ctx.params) {
+                if( paramMiddlewares[i])
+                    _params.push(paramMiddlewares[i]);
+            }
+            // param fn at first
+            return compose(_params.concat(middlewares))(ctx).then(() => next());
         };
     }
 
@@ -137,7 +155,14 @@ const Koa66 = module.exports = class Koa66 {
      */
     register(method, path) {
         debug('Register %s %s', method, path);
-        const middlewares = Array.prototype.slice.call(arguments, 2);
+        let middlewares;
+        let paramKey;
+        if (typeof arguments[2] === 'string') {
+            paramKey = arguments[2];
+            middlewares = Array.prototype.slice.call(arguments, 3);
+        } else {
+            middlewares = Array.prototype.slice.call(arguments, 2);
+        }
 
         assert(middlewares.length, 'middleware is required');
 
@@ -159,8 +184,9 @@ const Koa66 = module.exports = class Koa66 {
                 paramNames: keys
             };
 
-            if (method)
-                route.method = method.toUpperCase();
+            if (paramKey) route.paramKey = paramKey;
+
+            if (method) route.method = method.toUpperCase();
 
             this.stacks.push(route);
         });
