@@ -1,7 +1,6 @@
 'use strict';
 
 const debug = require('debug')('koa-66');
-const assert = require('assert');
 const pathToRegexp = require('path-to-regexp');
 const compose = require('koa-compose');
 
@@ -40,7 +39,8 @@ const Koa66 = module.exports = class Koa66 {
      * @api public
      */
     mount(prefix, router) {
-        assert(router instanceof Koa66, 'require a Koa66 instance');
+        if(!router instanceof Koa66)
+            throw new TypeError('require a Koa66 instance');
         router.stacks.forEach(s => this.register(s.method, prefix + s.path, s.middleware));
         return this;
     }
@@ -61,9 +61,16 @@ const Koa66 = module.exports = class Koa66 {
         return this.register.apply(this, args);
     }
 
+    /**
+     * param express like function
+     *
+     * @param  {String}   key
+     * @param  {Function} fn
+     * @return {Object}
+     */
     param(key, fn) {
-        assert(typeof key === 'string', 'require a string');
-        assert(typeof fn === 'function', 'require a function');
+        if(typeof key !== 'string' || typeof fn !== 'function')
+            throw new TypeError('usage: param(string, function)');
         return this.register(false, '(.*)', key, fn);
     }
 
@@ -164,7 +171,8 @@ const Koa66 = module.exports = class Koa66 {
             middlewares = Array.prototype.slice.call(arguments, 2);
         }
 
-        assert(middlewares.length, 'middleware is required');
+        if (!middlewares.length)
+            throw new Error('middleware is required');
 
         middlewares.forEach(m => {
             if (Array.isArray(m)) {
@@ -172,7 +180,8 @@ const Koa66 = module.exports = class Koa66 {
                 return this;
             }
 
-            assert(typeof m === 'function', 'middleware must be a function');
+            if ( typeof m !== 'function')
+                throw new TypeError('middleware must be a function');
 
             const keys = [];
             const regexp = pathToRegexp(path, keys);
@@ -198,7 +207,6 @@ const Koa66 = module.exports = class Koa66 {
      *
      * @param  {[Object]} paramNames
      * @param  {[String]} captures
-     * @param  {[Object]} existingParams
      * @return {[Object]}
      * @api private
      */
@@ -227,7 +235,8 @@ methods.forEach(method => {
     Koa66.prototype[method] = function() {
         const args = Array.prototype.slice.call(arguments);
 
-        assert(typeof args[0] === 'string', 'path is required');
+        if (typeof args[0] !== 'string')
+            throw new TypeError('path is required');
 
         args.unshift(method);
         return this.register.apply(this, args);
