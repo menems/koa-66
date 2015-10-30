@@ -26,33 +26,40 @@ Why not use [koa-router](https://github.com/alexmingoia/koa-router)?
 
 - Express like http verbs methods
 - Express like use function
+- Express like param function
 - mount instance on specific path
 - multiple middleware as arguments
 - multiple middleware as array
+- automatic OPTIONS response
 - 501 and 405 status
 
 ## Usage
 
 ```js
-const Koa = require('koa');
+onst Koa = require('koa');
 const Router = require('koa-66');
 const app = new Koa();
 
 const router = new Router();
 const mainRouter  = new Router();
 
-router.use(async function(ctx, next) {
-    ctx.a = " world";
+router.param('id', (ctx, next, id) => {
+        ctx.yolo = id;
+        return next();
+});
+
+router.use(async (ctx, next) => {
+    ctx.a = " ";
     await next();
 });
 
-router.get('/', (ctx, next) => {
+router.get('/:id', (ctx, next) => {
     return next().then(() => {
-        ctx.body += ctx.a;
+        ctx.body += ctx.a + ctx.yolo;
    })
 });
 
-router.get('/', async ctx => {
+router.get('/:id', async ctx => {
     ctx.body = await Promise.resolve('hello');
 });
 
@@ -60,7 +67,9 @@ mainRouter.mount('/pouet', router);
 
 app.use(mainRouter.routes());
 
-app.listen(1664);
+app.listen(1667);
+// GET http://localhost:1664/pouet/world
+// => hello world
 ```
 
 ## Test
