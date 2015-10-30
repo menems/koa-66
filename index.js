@@ -33,6 +33,9 @@ const Koa66 = module.exports = class Koa66 {
     /**
      * Mount a Koa66 instance on a prefix path
      *
+     * @todo: too memory expensive instance are clone
+     * maybe add a keep args to remove the router instance mounted!
+     *
      * @param  {string} prefix
      * @param  {Object} router  Koa66 instance
      * @return {Object}         Koa66 instance
@@ -41,7 +44,14 @@ const Koa66 = module.exports = class Koa66 {
     mount(prefix, router) {
         if(!router instanceof Koa66)
             throw new TypeError('require a Koa66 instance');
-        router.stacks.forEach(s => this.register(s.method, prefix + s.path, s.middleware));
+
+        router.stacks.forEach(s => {
+            if(s.paramKey) {
+                this.register(s.method, prefix + s.path, s.paramKey, s.middleware);
+            }else {
+                this.register(s.method, prefix + s.path, s.middleware);
+            }
+        });
         return this;
     }
 
@@ -115,7 +125,6 @@ const Koa66 = module.exports = class Koa66 {
                     middlewares.push(route.middleware);
                 }
             });
-
 
             // only use middleware
             if (!allowed.length) return next();
@@ -222,7 +231,6 @@ const Koa66 = module.exports = class Koa66 {
         }
         return params;
     };
-
 }
 
 /**

@@ -451,6 +451,43 @@ describe('Koa-66', function() {
             .end(done);
     });
 
+    it('runs children parameter middleware for subrouter', function(done) {
+        var app = new Koa();
+        var router = new Router();
+        var subrouter = new Router();
+
+        subrouter
+        .param ('cid', (ctx, next, cid) => {
+            ctx.b = cid;
+            next();
+        })
+        .get('/:cid', (ctx) => {
+            ctx.body = {
+                id: ctx.a,
+                cid: ctx.b
+            };
+        });
+
+        router
+            .param('id', (ctx, next, id) => {
+                ctx.a = id;
+                next();
+            })
+            .mount('/:id/children', subrouter);
+
+        app.use(router.routes());
+
+        request(app.listen())
+            .get('/pouet/children/2')
+            .expect(200)
+            .expect({
+                id : 'pouet',
+                'cid': '2'
+            })
+            .end(done);
+    });
+
+
     it('runs parameter middleware in order of URL appearance', function(done) {
       var app = new Koa();
       var router = new Router();
