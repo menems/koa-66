@@ -1,6 +1,9 @@
 # koa-66
 
-Router middleware for the next release of [koa](https://github.com/koajs/koa).
+[![NPM version][npm-image]][npm-url]
+[![build status][travis-image]][travis-url]
+
+Router middleware for [koa](https://github.com/koajs/koa) v2.
 
 Inspired by [koa-router](https://github.com/alexmingoia/koa-router)
 
@@ -77,3 +80,8 @@ app.listen(1667);
 # npm test
 
 ```
+
+[npm-image]: https://img.shields.io/npm/v/koa-66.svg?style=flat-square
+[npm-url]: https://npmjs.org/package/koa-66
+[travis-image]: https://api.travis-ci.org/menems/koa-66.svg?branch=master&style=flat-square
+[travis-url]: https://travis-ci.org/menems/koa-66
