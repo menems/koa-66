@@ -1,7 +1,7 @@
 {
   "name": "koa-66",
   "version": "0.5.2",
-  "description": "Router for the next koa release with promised support",
+  "description": "Router middleware for koa v2",
   "main": "index.js",
   "repository": {
     "type": "git",
@@ -13,14 +13,16 @@
   "keywords": [
     "koa",
     "router",
+    "route",
+    "middleware",
     "es2015",
     "asyncFunctions"
   ],
-  "author": "Arnaud Veronie <blaz@menems.net>",
+  "author": "blaz <blaz@menems.net>",
   "license": "MIT",
   "dependencies": {
     "debug": "^2.2.0",
-    "koa-compose": "koajs/compose.git#master",
+    "koa-compose": "^3.0.0",
     "path-to-regexp": "^1.2.1"
   },
   "devDependencies": {
@@ -30,6 +32,6 @@
     "supertest": "^1.1.0"
   },
   "engines": {
-    "node": "> 4"
+    "node": ">= 4"
   }
 }
