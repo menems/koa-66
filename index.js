@@ -195,7 +195,7 @@ const Koa66 = module.exports = class Koa66 {
             const keys = [];
             const regexp = pathToRegexp(path, keys);
 
-            var route = {
+            const route = {
                 path: path,
                 middleware: m,
                 regexp: regexp,

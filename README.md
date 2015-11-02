@@ -3,6 +3,7 @@
 [![Node.js Version][node-image]][node-url]
 [![NPM version][npm-image]][npm-url]
 [![build status][travis-image]][travis-url]
+[![Dependency Status][dep-image]][dep-url]
 
 Router middleware for [koa](https://github.com/koajs/koa) v2.
 Inspired by [koa-router](https://github.com/alexmingoia/koa-router)
@@ -87,3 +88,5 @@ Why not use [koa-router](https://github.com/alexmingoia/koa-router)?
 [npm-url]: https://npmjs.org/package/koa-66
 [travis-image]: https://img.shields.io/travis/menems/koa-66/master.svg?style=flat-square
 [travis-url]: https://travis-ci.org/menems/koa-66
+[dep-image]: http://david-dm.org/menems/koa-66.svg?style=flat-square
+[dep-url]:http://david-dm.org/menems/koa-66
