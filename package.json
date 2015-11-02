@@ -24,7 +24,7 @@
     "path-to-regexp": "^1.2.1"
   },
   "devDependencies": {
-    "koa": "koajs/koa#master",
+    "koa": "2.0.0-alpha.2",
     "mocha": "^2.3.3",
     "should": "^7.1.1",
     "supertest": "^1.1.0"
