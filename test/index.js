@@ -1,5 +1,5 @@
 const Router = require('../');
-const Koa = require('Koa');
+const Koa = require('koa');
 const request = require('supertest');
 const should = require('should');
 
