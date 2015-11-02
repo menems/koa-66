@@ -1,4 +1,10 @@
 
+v0.5.3 / 2015-11-02
+===================
+
+  * refactor: test with arrow function
+  * chore: readme.md, package.json update
+
 v0.5.2 / 2015-11-02
 ===================
   * wtf npm
@@ -28,6 +34,7 @@ v0.4.0 / 2015-10-29
   * fix: methods on prototype instead in constructor
   * fix: multiple middleware on use functions
   * readme update
+
 v0.3.0 / 2015-10-26
 ===================
 
