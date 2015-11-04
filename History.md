@@ -1,4 +1,10 @@
 
+v0.5.4 / 2015-11-04
+===================
+
+  * feat: Add throw option on routes();
+  * chore: add dependencies badge + var -> const
+
 v0.5.3 / 2015-11-02
 ===================
 
