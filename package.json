@@ -8,7 +8,9 @@
     "url": "https://github.com/menems/koa-66.git"
   },
   "scripts": {
-    "test": "mocha --require should -R spec test/index.js"
+    "test": "mocha --require should",
+    "test-cov": "istanbul cover _mocha -- --require should --bail",
+    "test-travis" : "istanbul cover _mocha --report lcovonly -- --require should --bail"
   },
   "keywords": [
     "koa",
@@ -26,6 +28,7 @@
     "path-to-regexp": "^1.2.1"
   },
   "devDependencies": {
+    "istanbul": "^0.4.0",
     "koa": "2.0.0-alpha.2",
     "mocha": "^2.3.3",
     "should": "^7.1.1",

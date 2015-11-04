@@ -4,6 +4,7 @@
 [![NPM version][npm-image]][npm-url]
 [![build status][travis-image]][travis-url]
 [![Dependency Status][dep-image]][dep-url]
+[![Coverage Status][cov-img]][cov-url]
 
 Router middleware for [koa](https://github.com/koajs/koa) v2.
 Inspired by [koa-router](https://github.com/alexmingoia/koa-router)
@@ -129,3 +130,5 @@ Why not use [koa-router](https://github.com/alexmingoia/koa-router)?
 [travis-url]: https://travis-ci.org/menems/koa-66
 [dep-image]: http://david-dm.org/menems/koa-66.svg?style=flat-square
 [dep-url]:http://david-dm.org/menems/koa-66
+[cov-img]:https://coveralls.io/repos/menems/koa-66/badge.svg?branch=master&service=github
+[cov-url]:https://coveralls.io/github/menems/koa-66?branch=master
