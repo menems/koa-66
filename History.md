@@ -1,3 +1,7 @@
+v0.5.5 / 2015-11-04
+===================
+
+  * feat: Add all() method on Router
 
 v0.5.4 / 2015-11-04
 ===================
@@ -78,4 +82,3 @@ v0.1.1 / 2015-10-22
   * readme: add example
   * fix: use regexp
   * Initial commit
-
