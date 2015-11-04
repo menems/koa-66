@@ -17,7 +17,7 @@ const methods = [
 /**
  * Expose Koa66 class.
  */
-const Koa66 = module.exports = class Koa66 {
+class Koa66 {
 
     /**
      * Initialise a new Koa66
@@ -268,11 +268,15 @@ methods.forEach(method => {
 
         if (typeof args[0] !== 'string')
             throw new TypeError('path is required');
+
         if (typeof method == 'string' && method == 'del')
             method = 'delete';
+
         args.unshift([method]);
         return this.register.apply(this, args);
     };
 });
 
 Koa66.prototype.del = Koa66.prototype['delete'];
+
+module.exports = Koa66;
