@@ -142,6 +142,27 @@ describe('Koa-66', () => {
                     .end(done);
             })
         });
+
+        it('should work with `all`', (done) => {
+          const app = new Koa();
+          const router = new Router();
+          let remained = methods.length
+
+          router.all('/hello', ctx => ctx.body = 'world');
+
+          app.use(router.routes());
+
+          methods.forEach((m, index) => {
+            request(app.listen())
+                [m == 'del' ? 'delete' : m]('/hello')
+                .expect(200)
+                .expect(m == 'head' ? '' : 'world')
+                .end((err) => {
+                  if (err) done(err);
+                  else if (--remained === 0) done();
+                });
+          });
+        })
     });
 
 
