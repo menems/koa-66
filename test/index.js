@@ -12,7 +12,8 @@ const methods = [
     'post',
     'put',
     'patch',
-    'delete'
+    'delete',
+    'del'
 ];
 
 describe('Koa-66', () => {
@@ -136,7 +137,7 @@ describe('Koa-66', () => {
                 app.use(router.routes());
 
                 request(app.listen())
-                    [m == 'del'?'delete': m]('/hello')
+                    [m]('/hello')
                     .expect(200)
                     .expect(m == 'head' ? '' : 'world')
                     .end(done);
@@ -154,7 +155,7 @@ describe('Koa-66', () => {
 
           methods.forEach((m, index) => {
             request(app.listen())
-                [m == 'del' ? 'delete' : m]('/hello')
+                [m]('/hello')
                 .expect(200)
                 .expect(m == 'head' ? '' : 'world')
                 .end((err) => {

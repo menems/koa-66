@@ -11,8 +11,7 @@ const methods = [
     'post',
     'put',
     'patch',
-    'delete',
-    'del'
+    'delete'
 ];
 
 /**
@@ -180,7 +179,7 @@ const Koa66 = module.exports = class Koa66 {
       if (typeof args[0] !== 'string')
           throw new TypeError('path is required');
 
-      args.unshift(methods.slice(0, -1));
+      args.unshift(methods);
       return this.register.apply(this, args);
     }
 
@@ -269,8 +268,11 @@ methods.forEach(method => {
 
         if (typeof args[0] !== 'string')
             throw new TypeError('path is required');
-
+        if (typeof method == 'string' && method == 'del')
+            method = 'delete';
         args.unshift([method]);
         return this.register.apply(this, args);
     };
 });
+
+Koa66.prototype.del = Koa66.prototype['delete'];
