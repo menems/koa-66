@@ -9,10 +9,10 @@ Router middleware for [koa](https://github.com/koajs/koa) v2.
 Inspired by [koa-router](https://github.com/alexmingoia/koa-router)
 
 > feedbacks are welcome
- 
+
 ## Features
 
-- Express like http verbs methods
+- Express like http verbs methods (including `all`)
 - Express like use function
 - Express like param function
 - Automatic OPTIONS response
@@ -22,7 +22,7 @@ Inspired by [koa-router](https://github.com/alexmingoia/koa-router)
 - Multiple middleware as arguments
 - Multiple middleware as array
 
-## Instalation
+## Installation
 
 ```bash
 # npm install koa-66
