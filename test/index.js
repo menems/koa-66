@@ -1,3 +1,5 @@
+'use strict';
+
 const Router = require('../');
 const Koa = require('koa');
 const request = require('supertest');
@@ -364,6 +366,23 @@ describe('Koa-66', () => {
                 .end(done);
         });
 
+        it('throw option, should throw 501 on not implemented methods', done => {
+            const app = new Koa();
+            const router = new Router();
+            router.get('/', ctx => {});
+
+            app.use(router.routes({throw: true}));
+            app.on('error', function(err) {
+                if (err.name == 'NotImplementedError' && err.statusCode == 501)
+                    return done();
+                done(Error());
+            })
+
+            request(app.listen())
+                .search('/')
+                .end();
+        });
+
         it('should return 405 on not allowed method', done => {
             const app = new Koa();
             const router = new Router();
@@ -383,6 +402,29 @@ describe('Koa-66', () => {
                     done();
                 });
         });
+
+        it('throw option, should throw 405 on not allowed methods with headers', done => {
+            const app = new Koa();
+            const router = new Router();
+            router.get('/', ctx => {});
+            router.get('/', ctx => {});
+            router.put('/', ctx => {});
+
+            app.use(router.routes({throw: true}));
+
+            app.on('error', function(err) {
+                if (err.name == 'MethodNotAllowedError'
+                    && err.statusCode == 405
+                    && err.headers && err.headers.allow && err.headers.allow === 'HEAD, GET, PUT')
+                    return done();
+                done(Error());
+            })
+
+            request(app.listen())
+                .post('/')
+                .end();
+        });
+
 
         it('if no HEAD method registered and have GET should 200', done => {
             const app = new Koa();

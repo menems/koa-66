@@ -17,7 +17,7 @@ Inspired by [koa-router](https://github.com/alexmingoia/koa-router)
 - Express like param function
 - Automatic OPTIONS response
 - Automatic HEAD when GET is present
-- 501 and 405 status
+- 501 and 405 status (throw capability with headers)
 - Mount instance on specific path
 - Multiple middleware as arguments
 - Multiple middleware as array
@@ -28,7 +28,8 @@ Inspired by [koa-router](https://github.com/alexmingoia/koa-router)
 # npm install koa-66
 ```
 
-## Usage
+
+## Example
 
 ```js
 const Koa = require('koa');
@@ -43,7 +44,7 @@ router.param('id', (ctx, next, id) => {
         return next();
 });
 
-router.use(async (ctx, next) => {
+router.use(async function(ctx, next) {
     ctx.a = " ";
     await next();
 });
@@ -54,7 +55,7 @@ router.get('/:id', (ctx, next) => {
    })
 });
 
-router.get('/:id', async ctx => {
+router.get('/:id', async function(ctx) {
     ctx.body = await Promise.resolve('hello');
 });
 
@@ -66,6 +67,44 @@ app.listen(1664);
 // GET http://localhost:1664/pouet/world
 // => hello world
 ```
+
+## Example with __throw__ option
+```javascript
+const Koa = require('koa');
+const Router = require('koa-66');
+const app = new Koa();
+
+const router = new Router();
+
+app.use(async function(ctx, next) {
+	try {
+		await next();
+	}catch(e){
+		if(e.status === 405) {
+			ctx.status = 405;
+			ctx.set(e.headers);
+		}
+	}
+})
+
+router.get('/', (ctx) => ctx.body = 'hello');
+
+app.use(router.routes({throw: true}));
+
+app.listen(1664);
+
+// > curl http://localhost:1664/ -I -X POST
+//
+// HTTP/1.1 405 Method Not Allowed
+// allow: HEAD, GET
+// Content-Type: text/plain; charset=utf-8
+// Content-Length: 18
+// Date: Wed, 04 Nov 2015 10:29:06 GMT
+// Connection: keep-alive
+
+```
+
+
 
 ## Test
 ```bash

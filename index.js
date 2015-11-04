@@ -90,7 +90,10 @@ const Koa66 = module.exports = class Koa66 {
      * @return {Function}
      * @api public
      */
-    routes() {
+    routes(options) {
+
+        options = options || {};
+
         return (ctx, next) => {
 
             const middlewares = [];
@@ -131,6 +134,8 @@ const Koa66 = module.exports = class Koa66 {
 
             // 501
             if (this.methods.indexOf(ctx.method.toLowerCase()) === -1) {
+                if (options.throw)
+                    ctx.throw(501);
                 ctx.status = 501;
                 return next();
             }
@@ -143,10 +148,12 @@ const Koa66 = module.exports = class Koa66 {
                     return next();
                 }
 
+                const _allowed = allowed.filter((value, index, self) => self.indexOf(value) === index).join(', ');
+
+                if (options.throw)
+                    ctx.throw(405, {headers: {allow : _allowed}});
                 ctx.status = 405;
-                ctx.set('Allow', allowed.filter((value, index, self) => {
-                    return self.indexOf(value) === index;
-                }));
+                ctx.set('Allow', _allowed);
                 return next();
             }
 
