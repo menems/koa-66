@@ -47,9 +47,9 @@ const Koa66 = module.exports = class Koa66 {
 
         router.stacks.forEach(s => {
             if(s.paramKey) {
-                this.register(s.method, prefix + s.path, s.paramKey, s.middleware);
+                this.register(s.methods, prefix + s.path, s.paramKey, s.middleware);
             }else {
-                this.register(s.method, prefix + s.path, s.middleware);
+                this.register(s.methods, prefix + s.path, s.middleware);
             }
         });
         return this;
@@ -115,15 +115,16 @@ const Koa66 = module.exports = class Koa66 {
                             : next();
                     };
 
-                if (!route.method)
+                if (!route.methods)
                     return middlewares.push(route.middleware);
 
-                if (route.method === 'GET')
+                if (route.methods.indexOf('GET') !== -1)
                     allowed.push('HEAD');
-                allowed.push(route.method);
+                route.methods.forEach(m => allowed.push(m));
 
                 // method test
-                if ((route.method === ctx.method) || (ctx.method === 'HEAD' && route.method === 'GET')) {
+                if ((route.methods.indexOf(ctx.method) !== -1) ||
+                    (ctx.method === 'HEAD' && route.methods.indexOf('GET') !== -1)) {
                     matched = true;
                     middlewares.push(route.middleware);
                 }
@@ -168,16 +169,32 @@ const Koa66 = module.exports = class Koa66 {
     }
 
     /**
+     * Register a route for all methods.
+     *
+     * @param  {String}  path
+     * @return {[Functions]...}  middleware
+     */
+    all() {
+      const args = Array.prototype.slice.call(arguments);
+
+      if (typeof args[0] !== 'string')
+          throw new TypeError('path is required');
+
+      args.unshift(methods.slice(0, -1));
+      return this.register.apply(this, args);
+    }
+
+    /**
      * Register a new middlewate, http route or use middeware
      *
-     * @param  {string} method
+     * @param  {string} methods
      * @param  {string} path
      * @param  {Function} middleware
      * @return {Object} Koa66 instance
      * @api private
      */
-    register(method, path) {
-        debug('Register %s %s', method, path);
+    register(methods, path) {
+        debug('Register %s %s', methods, path);
         let middlewares;
         let paramKey;
         if (typeof arguments[2] === 'string') {
@@ -192,7 +209,7 @@ const Koa66 = module.exports = class Koa66 {
 
         middlewares.forEach(m => {
             if (Array.isArray(m)) {
-                m.forEach(_m => this.register(method, path, _m));
+                m.forEach(_m => this.register(methods, path, _m));
                 return this;
             }
 
@@ -211,7 +228,7 @@ const Koa66 = module.exports = class Koa66 {
 
             if (paramKey) route.paramKey = paramKey;
 
-            if (method) route.method = method.toUpperCase();
+            if (methods) route.methods = methods.map((m) => m.toUpperCase());
 
             this.stacks.push(route);
         });
@@ -253,7 +270,7 @@ methods.forEach(method => {
         if (typeof args[0] !== 'string')
             throw new TypeError('path is required');
 
-        args.unshift(method);
+        args.unshift([method]);
         return this.register.apply(this, args);
     };
 });
