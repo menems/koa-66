@@ -1,4 +1,12 @@
 
+v0.6.0 / 2015-11-05
+===================
+
+  * chore: Readme update
+  * refactor: remove const Koa66
+  * fix: remove del from allow methods
+  * feat: Support all() method for Router
+
 v0.5.4 / 2015-11-04
 ===================
 
