@@ -41,7 +41,7 @@ class Koa66 {
      * @api public
      */
     mount(prefix, router) {
-        if(!router instanceof Koa66)
+        if(!(router instanceof Koa66))
             throw new TypeError('require a Koa66 instance');
 
         router.stacks.forEach(s => {
@@ -107,12 +107,11 @@ class Koa66 {
                 if (route.paramNames)
                     ctx.params = this.parseParams(ctx.params, route.paramNames, ctx.path.match(route.regexp).slice(1))
 
-                if (route.paramKey)
+                if (route.paramKey){
                     return paramMiddlewares[route.paramKey] = (ctx, next) => {
-                        return (ctx.params[route.paramKey])
-                            ? route.middleware(ctx, next, ctx.params[route.paramKey])
-                            : next();
+                        return route.middleware(ctx, next, ctx.params[route.paramKey])
                     };
+                }
 
                 if (!route.methods)
                     return middlewares.push(route.middleware);
@@ -268,9 +267,6 @@ methods.forEach(method => {
 
         if (typeof args[0] !== 'string')
             throw new TypeError('path is required');
-
-        if (typeof method == 'string' && method == 'del')
-            method = 'delete';
 
         args.unshift([method]);
         return this.register.apply(this, args);
