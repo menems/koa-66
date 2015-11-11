@@ -144,6 +144,12 @@ describe('Koa-66', () => {
             })
         });
 
+        it('all(), should throw if no path', done => {
+            const router = new Router();
+            (()=> router.all()).should.throw('path is required');
+            done();
+        });
+
         it('should work with all', (done) => {
           const app = new Koa();
           const router = new Router();
@@ -169,6 +175,11 @@ describe('Koa-66', () => {
 
     describe('mount()', () => {
 
+        it('should throw if no a koa-66 instance', done => {
+            const router = new Router();
+            (()=>router.mount('/', {})).should.throw('require a Koa66 instance');
+            done();
+        })
 
         it('.mount should 200 with correct path', done => {
             const app = new Koa();
@@ -477,6 +488,17 @@ describe('Koa-66', () => {
 
     describe('param()', () => {
 
+        it('should throw if key is not a string', done => {
+            const router = new Router();
+            (()=>router.param()).should.throw('usage: param(string, function)');
+            done();
+        })
+        it('should throw if fn is not a function', done => {
+            const router = new Router();
+            (()=>router.param('')).should.throw('usage: param(string, function)');
+            done();
+        })
+
         // param() test taken from koa-router
         it('param should be resolve', done => {
             const app = new Koa();
@@ -494,6 +516,24 @@ describe('Koa-66', () => {
                 .get('/pouet')
                 .expect(200)
                 .expect('pouet')
+                .end(done);
+        });
+
+         it('param should not be resolve', done => {
+            const app = new Koa();
+            const router = new Router();
+
+            router.param('idc', (ctx, next, id) => {
+                ctx.test = id;
+                next();
+            });
+
+            router.get('/:id', ctx => ctx.body = ctx.test);
+            app.use(router.routes());
+
+            request(app.listen())
+                .get('/pouet')
+                .expect(204)
                 .end(done);
         });
 
