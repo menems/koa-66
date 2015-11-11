@@ -1,6 +1,6 @@
 {
   "name": "koa-66",
-  "version": "0.6.0",
+  "version": "0.6.1",
   "description": "Router middleware for koa v2",
   "main": "index.js",
   "repository": {
@@ -10,7 +10,7 @@
   "scripts": {
     "test": "mocha --require should",
     "test-cov": "istanbul cover _mocha -- --require should --bail",
-    "test-travis" : "istanbul cover _mocha --report lcovonly -- --require should --bail"
+    "test-travis": "istanbul cover _mocha --report lcovonly -- --require should --bail"
   },
   "keywords": [
     "koa",

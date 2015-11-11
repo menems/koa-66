@@ -1,4 +1,11 @@
 
+v0.6.1 / 2015-11-11
+===================
+
+  * test: missing test
+  * perf: remove unnecessary branch
+  * chore : add istanbul, coverage
+
 v0.6.0 / 2015-11-05
 ===================
 
