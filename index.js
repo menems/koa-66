@@ -107,11 +107,9 @@ class Koa66 {
                 if (route.paramNames)
                     ctx.params = this.parseParams(ctx.params, route.paramNames, ctx.path.match(route.regexp).slice(1))
 
-                if (route.paramKey){
-                    return paramMiddlewares[route.paramKey] = (ctx, next) => {
-                        return route.middleware(ctx, next, ctx.params[route.paramKey])
-                    };
-                }
+                if (route.paramKey)
+                    return paramMiddlewares[route.paramKey] = (ctx, next) =>
+                        route.middleware(ctx, next, ctx.params[route.paramKey]);
 
                 if (!route.methods)
                     return middlewares.push(route.middleware);
