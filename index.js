@@ -3,6 +3,7 @@
 const debug = require('debug')('koa-66');
 const pathToRegexp = require('path-to-regexp');
 const compose = require('koa-compose');
+const util = require('util');
 
 const methods = [
     'options',
@@ -198,7 +199,7 @@ class Koa66 {
       const args = Array.prototype.slice.call(arguments);
 
       if (typeof args[0] !== 'string')
-          throw new TypeError('path is required');
+            args.unshift('/')
 
       args.unshift(methods);
       return this.register.apply(this, args);
@@ -247,6 +248,7 @@ class Koa66 {
                 throw new TypeError('middleware must be a function');
 
             const keys = [];
+            path = (!path || path === '(.*)' || util.isRegExp(path))? path : this.sanitizePath(path);
             const regexp = pathToRegexp(path, keys);
 
             const route = {
@@ -298,7 +300,7 @@ methods.forEach(method => {
         const args = Array.prototype.slice.call(arguments);
 
         if (typeof args[0] !== 'string')
-            throw new TypeError('path is required');
+            args.unshift('/');
 
         args.unshift([method]);
         return this.register.apply(this, args);

@@ -20,17 +20,6 @@ describe('Koa-66', () => {
 
     describe('core', () => {
 
-        it('path is required', done => {
-            const router = new Router();
-            try {
-                router.get();
-                done(Error());
-            } catch (e) {
-                e.message.should.equal('path is required');
-                done();
-            }
-        });
-
         it('middleware must be present', done => {
             const router = new Router();
             try {
@@ -143,11 +132,21 @@ describe('Koa-66', () => {
                     .end(done);
             })
         });
+        methods.forEach(m => {
+            it(`should work with ${m} and no path`, (done) => {
+                const app = new Koa();
+                const router = new Router();
 
-        it('all(), should throw if no path', done => {
-            const router = new Router();
-            (()=> router.all()).should.throw('path is required');
-            done();
+                router[m](ctx => ctx.body = 'world');
+
+                app.use(router.routes());
+
+                request(app.listen())
+                    [m]('/')
+                    .expect(200)
+                    .expect(m == 'head' ? '' : 'world')
+                    .end(done);
+            })
         });
 
         it('should work with all', (done) => {
