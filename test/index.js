@@ -45,7 +45,7 @@ describe('Koa-66', () => {
         it('middleware must be a function', done => {
             const router = new Router();
             try {
-                router.get('/', {});
+                router.get('/', 42);
                 done(Error());
             } catch (e) {
                 e.message.should.equal('middleware must be a function');
@@ -640,6 +640,138 @@ describe('Koa-66', () => {
                 .end(done);
         });
 
+
     });
+
+    describe('plugins', () => {
+
+        it('should throw if name is not a string', done => {
+            const router = new Router();
+            (()=>router.plugin()).should.throw('usage: plugin(string, function)');
+            done();
+        })
+
+        it('should throw if fn is not a function', done => {
+            const router = new Router();
+            (()=>router.plugin('')).should.throw('usage: plugin(string, function)');
+            done();
+        })
+
+        it('should work', done => {
+            const app = new Koa();
+            const router = new Router();
+
+            router.plugin('test', (ctx, next, params) => {
+                ctx.body = 'hello';
+                return next();
+            })
+
+            router.get('/', {test: true}, ctx => {
+                ctx.body += 'world';
+            })
+
+            app.use(router.routes());
+
+            request(app.listen())
+                .get('/')
+                .expect(200)
+                .expect('helloworld')
+                .end(done);
+        });
+
+        it('should stop without next', done => {
+            const app = new Koa();
+            const router = new Router();
+
+            router.plugin('test', (ctx, next, params) => {
+            })
+
+            router.get('/', {test: true}, ctx => {
+                ctx.body = 'world';
+            })
+
+            app.use(router.routes());
+
+            request(app.listen())
+                .get('/')
+                .expect(404)
+                .end(done);
+        });
+
+        it('should work with multiple', done => {
+            const app = new Koa();
+            const router = new Router();
+
+            router.plugin('test', (ctx, next, params) => {
+                ctx.body = 'hello';
+                return next();
+            })
+            router.plugin('test2', (ctx, next, params) => {
+                ctx.body += 'world';
+                return next();
+            })
+
+
+            router.get('/', {test: true, test2:true}, ctx => {
+            })
+
+            app.use(router.routes());
+
+            request(app.listen())
+                .get('/')
+                .expect(200)
+                .expect('helloworld')
+                .end(done);
+        });
+
+        it('should work from parent', done => {
+            const app = new Koa();
+            const router = new Router();
+            const router2 = new Router();
+
+            router.get('/', {test:true}, ctx => {
+            })
+
+            router2.plugin('test', (ctx, next, params) => {
+                ctx.body = 'world';
+                return next();
+            })
+
+            router2.mount('/plop', router);
+
+            app.use(router2.routes());
+
+            request(app.listen())
+                .get('/plop')
+                .expect(200)
+                .expect('world')
+                .end(done);
+        });
+
+        it('should work with use', done => {
+            const app = new Koa();
+            const router = new Router();
+
+            router.plugin('test', (ctx, next, params) => {
+                ctx.body = 'hello';
+                return next();
+            })
+
+            router.use({test: true})
+
+            router.get('/', ctx => {})
+
+            app.use(router.routes());
+
+            request(app.listen())
+                .get('/')
+                .expect(200)
+                .expect('hello')
+                .end(done);
+        });
+
+    })
+
+
 
 });

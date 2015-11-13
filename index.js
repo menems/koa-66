@@ -27,6 +27,7 @@ class Koa66 {
     constructor() {
         this.stacks = [];
         this.methods = methods;
+        this.plugs = [];
     }
 
     /**
@@ -64,7 +65,7 @@ class Koa66 {
      */
     use(path, fn) {
         const args = Array.prototype.slice.call(arguments);
-        if (typeof args[0] === 'function')
+        if (typeof args[0] !== 'string')
             args.unshift('(.*)');
         args.unshift(false);
         return this.register.apply(this, args);
@@ -81,6 +82,12 @@ class Koa66 {
         if(typeof key !== 'string' || typeof fn !== 'function')
             throw new TypeError('usage: param(string, function)');
         return this.register(false, '(.*)', key, fn);
+    }
+
+    plugin(name, fn) {
+        if(typeof name !== 'string' || typeof fn !== 'function')
+            throw new TypeError('usage: plugin(string, function)');
+        this.plugs[name] = fn;
     }
 
     /**
@@ -110,6 +117,15 @@ class Koa66 {
                 if (route.paramKey)
                     return paramMiddlewares[route.paramKey] = (ctx, next) =>
                         route.middleware(ctx, next, ctx.params[route.paramKey]);
+
+                if ( typeof route.middleware === 'object') {
+                    for (let i in route.middleware) {
+                        if ( this.plugs[i])
+                            middlewares.push( (ctx, next) =>
+                                this.plugs[i](ctx, next, route.middleware[i]))
+                    }
+                    return;
+                }
 
                 if (!route.methods)
                     return middlewares.push(route.middleware);
@@ -209,7 +225,7 @@ class Koa66 {
                 return this;
             }
 
-            if ( typeof m !== 'function')
+            if ( typeof m !== 'function' && typeof m !== 'object')
                 throw new TypeError('middleware must be a function');
 
             const keys = [];
