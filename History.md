@@ -1,4 +1,12 @@
 
+v0.7.0 / 2015-11-13
+===================
+
+  * feat: no path needed now, default to /
+  * feat: add sanitizePath method
+  * feat: add plugin support
+  * refactor: remove unnecessary () and {}
+
 v0.6.1 / 2015-11-11
 ===================
 
