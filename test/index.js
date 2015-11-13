@@ -772,6 +772,46 @@ describe('Koa-66', () => {
 
     })
 
+    describe('sanitysePath', () => {
+        const router = new Router();
+
+        it('should return / with no path', done => {
+            const path = router.sanitizePath();
+            path.should.be.equal('/');
+            done();
+        })
+        it('should return /pouet with pouet path', done => {
+            const path = router.sanitizePath('pouet');
+            path.should.be.equal('/pouet');
+            done();
+        })
+        it('should return /pouet with ////pouet path', done => {
+            const path = router.sanitizePath('////pouet');
+            path.should.be.equal('/pouet');
+            done();
+        })
+        it('should return /pouet with pouet//// path', done => {
+            const path = router.sanitizePath('pouet////');
+            path.should.be.equal('/pouet');
+            done();
+        })
+        it('should return /pouet with ////pouet//// path', done => {
+            const path = router.sanitizePath('////pouet////');
+            path.should.be.equal('/pouet');
+            done();
+        })
+        it('should return /pouet/pouet with ////pouet/pouet/// path', done => {
+            const path = router.sanitizePath('////pouet/pouet///');
+            path.should.be.equal('/pouet/pouet');
+            done();
+        })
+        it('should return /pouet/pouet with ////pouet/////pouet/// path', done => {
+            const path = router.sanitizePath('////pouet////pouet///');
+            path.should.be.equal('/pouet/pouet');
+            done();
+        })
+    });
+
 
 
 });

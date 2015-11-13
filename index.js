@@ -84,10 +84,18 @@ class Koa66 {
         return this.register(false, '(.*)', key, fn);
     }
 
+    /**
+     * plugin registration method
+     *
+     * @param  {String}   name
+     * @param  {Function} fn
+     * @return {Object}
+     */
     plugin(name, fn) {
         if(typeof name !== 'string' || typeof fn !== 'function')
             throw new TypeError('usage: plugin(string, function)');
         this.plugs[name] = fn;
+        return this;
     }
 
     /**
@@ -195,6 +203,16 @@ class Koa66 {
       args.unshift(methods);
       return this.register.apply(this, args);
     }
+
+    sanitizePath(path) {
+        if(!path) return '/';
+
+        return '/' + path
+            .replace(/^\/+/i, '')
+            .replace(/\/+$/, '')
+            .replace(/\/{2,}/, '/');
+    }
+
 
     /**
      * Register a new middlewate, http route or use middeware

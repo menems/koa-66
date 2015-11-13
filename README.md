@@ -129,7 +129,7 @@ main.plugin('acl', (ctx, next, options) => {
 	// do stuff check role via options object for example
 	return next();
 	//or throw or do nothing that will stop execution of router stack
-}
+})
 
 const router = new Router();
 
@@ -140,6 +140,7 @@ router.use({authent: true});
 
 router.get('/private', {acl:['admin']}, 
 	ctx => ctx.body = 'private'
+)
 
 main.mount('/api', router);
 ...	
