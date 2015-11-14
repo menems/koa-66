@@ -184,8 +184,8 @@ class Koa66 {
                 if( paramMiddlewares[i])
                     _params.push(paramMiddlewares[i]);
             }
-            // param fn at first
-            return compose(_params.concat(middlewares))(ctx).then(() => next());
+
+            return compose(_params.concat(middlewares))(ctx, next);
         };
     }
 

@@ -113,6 +113,59 @@ describe('Koa-66', () => {
                 .expect('world')
                 .end(done);
         });
+
+        it('should resolve next koa middleware', done => {
+            const app = new Koa();
+            const router = new Router();
+
+            app.use((ctx, next) => {
+                ctx.body = '1';
+                return next().then(result => ctx.body += result);
+            })
+
+            router.get('/', (ctx, next) => {
+                ctx.body += '2'
+                return next();
+            })
+
+            app.use(router.routes());
+
+            app.use((ctx, next) => {
+                ctx.body += '3'
+                return Promise.resolve('4');
+            })
+
+            request(app.listen())
+                .get('/')
+                .expect(200)
+                .expect('1234')
+                .end(done);
+        })
+
+        it('it should resolve with value', done => {
+
+            const app = new Koa();
+            const router = new Router();
+
+            app.use((ctx, next) => {
+                ctx.body = '1';
+                return next().then(result => ctx.body += '3');
+            })
+
+            router.get('/', (ctx, next) => {
+                ctx.body += '2'
+                return Promise.resolve('3');
+            })
+
+            app.use(router.routes());
+
+            request(app.listen())
+                .get('/')
+                .expect(200)
+                .expect('123')
+                .end(done);
+        })
+
     });
 
     describe('methods()', () => {
@@ -810,7 +863,5 @@ describe('Koa-66', () => {
             done();
         })
     });
-
-
 
 });
