@@ -149,7 +149,7 @@ describe('Koa-66', () => {
 
             app.use((ctx, next) => {
                 ctx.body = '1';
-                return next().then(result => ctx.body += '3');
+                return next().then(result => ctx.body += result);
             })
 
             router.get('/', (ctx, next) => {
