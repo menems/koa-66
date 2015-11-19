@@ -106,19 +106,22 @@ app.listen(1664);
 
 ```
 
-##Plugin support
+## Plugin support
 
 I don't know if Plugin is a good term for this feature.
 The goal was to add cappability to register some middleware on a main Router that will be inject via config object on different route.
 (ex: authentication  or acl behaviour).
 Why? Because I am lazy to require some middleware in all my router script with generaly relatif path...
 
-So I decided to add the possibility to inject an object at first parameter (that will be a config object) and adding an extra middleware that will be inject in middleware stack. To register this plugin just use a `plugin()`method
+So I decided to add the possibility to inject an object at first parameter (that will be a config object) and adding an extra middleware that will be inject in middleware stack. To register this plugin just use a `plugin()`method.
+
+> I will probably pass options on ctx.state object on next version
 
 ```javascript
 const Router = require('koa-66');
 const main = new Router();
 
+// you can use multiple middleware as arguments or array
 main.plugin('authent', (ctx, next, options) => {
 	// do stuff inject user on context for example
 	return next();
