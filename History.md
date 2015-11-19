@@ -1,4 +1,12 @@
 
+v0.7.2 / 2015-11-19
+===================
+
+  * test: add more test for no path and all method
+  * chore: Readme update
+  * feat: add multiple args on plugin
+  * fix: bad test
+
 v0.7.1 / 2015-11-14
 ===================
 
