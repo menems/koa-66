@@ -703,12 +703,6 @@ describe('Koa-66', () => {
             done();
         })
 
-        it('should throw if fn is not a function', done => {
-            const router = new Router();
-            (()=>router.plugin('')).should.throw('usage: plugin(string, function)');
-            done();
-        })
-
         it('should work', done => {
             const app = new Koa();
             const router = new Router();
@@ -820,6 +814,42 @@ describe('Koa-66', () => {
                 .expect(200)
                 .expect('hello')
                 .end(done);
+        });
+
+        it('should work with multiple middleware', done => {
+            const app = new Koa();
+            const router = new Router();
+
+            const m1 = (ctx, next) => {
+                ctx.body = '1';
+                return next();
+            }
+
+            const m2 = (ctx, next) => {
+                ctx.body += '2';
+                return next();
+            }
+            const m3 = (ctx, next) => {
+                ctx.body += '3';
+                return next();
+            }
+
+            router.plugin('test',[m1, m2], m3);
+
+            router.use({test: true})
+
+            router.get('/', ctx => {
+                ctx.body += '4';
+            })
+
+            app.use(router.routes());
+
+            request(app.listen())
+                .get('/')
+                .expect(200)
+                .expect('1234')
+                .end(done);
+
         });
 
     })

@@ -93,9 +93,18 @@ class Koa66 {
      * @return {Object}
      */
     plugin(name, fn) {
-        if(typeof name !== 'string' || typeof fn !== 'function')
+
+        if(typeof name !== 'string')
             throw new TypeError('usage: plugin(string, function)');
-        this.plugs[name] = fn;
+
+        const args  = Array.prototype.slice.call(arguments,1);
+
+        let middlewares = [];
+        args.forEach(m => {
+            if ( util.isArray(m)) middlewares = middlewares.concat(m);
+            if ( typeof m == 'function') middlewares.push(m)
+        })
+        this.plugs[name] = compose(middlewares);
         return this;
     }
 
@@ -131,7 +140,7 @@ class Koa66 {
                     for (let i in route.middleware) {
                         if ( this.plugs[i])
                             middlewares.push( (ctx, next) =>
-                                this.plugs[i](ctx, next, route.middleware[i]))
+                                this.plugs[i](ctx, next, route.middleware[i]));
                     }
                     return;
                 }
