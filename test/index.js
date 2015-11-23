@@ -285,7 +285,6 @@ describe('Koa-66', () => {
 
             apiRouter.mount('/ticket', router);
             rootRouter.mount('/api/v1', apiRouter);
-            let util = require('util');
             //Must be the last
             app.use(rootRouter.routes());
 
