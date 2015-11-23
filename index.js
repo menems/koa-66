@@ -138,6 +138,9 @@ class Koa66 {
                 // path test
                 if (!route.regexp.test(ctx.path)) return;
 
+                // Save the route so we can access ctx.route.path
+                ctx.route = route;
+
                 if (route.paramNames)
                     ctx.params = this.parseParams(ctx.params, route.paramNames, ctx.path.match(route.regexp).slice(1))
 
