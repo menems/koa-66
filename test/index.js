@@ -272,6 +272,30 @@ describe('Koa-66', () => {
                 .end(done);
         });
 
+        it('.mount should mount nested routes', done => {
+            const app = new Koa();
+            const rootRouter = new Router();
+            const apiRouter = new Router();
+            const router = new Router();
+
+            router.get('/:id', ctx => {
+              ctx.body = 'world';
+              ctx.route.path.should.be.equal('/api/v1/ticket/:id');
+            });
+
+            apiRouter.mount('/ticket', router);
+            rootRouter.mount('/api/v1', apiRouter);
+            let util = require('util');
+            //Must be the last
+            app.use(rootRouter.routes());
+
+            request(app.listen())
+                .get('/api/v1/ticket/66')
+                .expect(200)
+                .expect('world')
+                .end(done);
+        });
+
         it('.mount should 404 with old path', done => {
             const app = new Koa();
             const router = new Router();
