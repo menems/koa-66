@@ -3,7 +3,7 @@
  *
  * @author blaz <blaz@menems.net>
  * @link https://github.com/menems/koa-66
- * @licence MIT
+ * @license MIT
  *
  */
 
@@ -98,10 +98,10 @@ class Koa66 {
      * plugin registration method
      *
      * @param  {String}   name
-     * @param  {Function} fn
+     * @param  {[Function]...}
      * @return {Object}
      */
-    plugin(name, fn) {
+    plugin(name) {
 
         if(typeof name !== 'string')
             throw new TypeError('usage: plugin(string, function)');
@@ -237,7 +237,7 @@ class Koa66 {
 
 
     /**
-     * Register a new middlewate, http route or use middeware
+     * Register a new middleware, http route or use middeware
      *
      * @param  {string} methods
      * @param  {string} path
