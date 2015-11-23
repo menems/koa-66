@@ -7,7 +7,6 @@
 [![Coverage Status][cov-img]][cov-url]
 
 Router middleware for [koa](https://github.com/koajs/koa) v2.
-Inspired by [koa-router](https://github.com/alexmingoia/koa-router)
 
 > feedbacks are welcome
 
@@ -159,15 +158,6 @@ main.mount('/api', router);
 # npm test
 
 ```
-
-## why?
-Why not use [koa-route](https://github.com/koajs/route)?
-
-- Is a little minimalistic
-
-Why not use [koa-router](https://github.com/alexmingoia/koa-router)?
-
-- For now koa-router is broken with the new koa release [#186](https://github.com/alexmingoia/koa-router/issues/186)
 
 [node-image]: https://img.shields.io/node/v/koa-66.svg?style=flat-square
 [node-url]: https://nodejs.org
