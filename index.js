@@ -1,3 +1,12 @@
+/**
+ * Router for Koa v2
+ *
+ * @author blaz <blaz@menems.net>
+ * @link https://github.com/menems/koa-66
+ * @licence MIT
+ *
+ */
+
 'use strict';
 
 const debug = require('debug')('koa-66');
