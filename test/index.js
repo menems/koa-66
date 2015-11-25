@@ -898,7 +898,7 @@ describe('Koa-66', () => {
 
     })
 
-    describe('sanitysePath', () => {
+    describe('sanitizePath', () => {
         const router = new Router();
 
         it('should return / with no path', done => {
