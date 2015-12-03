@@ -12,8 +12,7 @@ const methods = [
     'post',
     'put',
     'patch',
-    'delete',
-    'del'
+    'delete'
 ];
 
 describe('Koa-66', () => {

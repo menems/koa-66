@@ -323,6 +323,4 @@ methods.forEach(method => {
     };
 });
 
-Koa66.prototype.del = Koa66.prototype.delete;
-
 module.exports = Koa66;
