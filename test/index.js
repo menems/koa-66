@@ -16,9 +16,7 @@ const methods = [
 ];
 
 describe('Koa-66', () => {
-
     describe('core', () => {
-
         it('middleware must be present', done => {
             const router = new Router();
             try {
@@ -98,7 +96,7 @@ describe('Koa-66', () => {
             const router = new Router();
 
             router.use((ctx, next) => {
-                ctx.body = 'wor'
+                ctx.body = 'wor';
                 next();
             });
 
@@ -120,41 +118,40 @@ describe('Koa-66', () => {
             app.use((ctx, next) => {
                 ctx.body = '1';
                 return next().then(result => ctx.body += result);
-            })
+            });
 
             router.get('/', (ctx, next) => {
-                ctx.body += '2'
+                ctx.body += '2';
                 return next();
-            })
+            });
 
             app.use(router.routes());
 
-            app.use((ctx, next) => {
-                ctx.body += '3'
+            app.use(ctx => {
+                ctx.body += '3';
                 return Promise.resolve('4');
-            })
+            });
 
             request(app.listen())
                 .get('/')
                 .expect(200)
                 .expect('1234')
                 .end(done);
-        })
+        });
 
         it('it should resolve with value', done => {
-
             const app = new Koa();
             const router = new Router();
 
             app.use((ctx, next) => {
                 ctx.body = '1';
                 return next().then(result => ctx.body += result);
-            })
+            });
 
-            router.get('/', (ctx, next) => {
-                ctx.body += '2'
+            router.get('/', ctx => {
+                ctx.body += '2';
                 return Promise.resolve('3');
-            })
+            });
 
             app.use(router.routes());
 
@@ -163,8 +160,7 @@ describe('Koa-66', () => {
                 .expect(200)
                 .expect('123')
                 .end(done);
-        })
-
+        });
     });
 
     describe('methods()', () => {
@@ -177,12 +173,11 @@ describe('Koa-66', () => {
 
                 app.use(router.routes());
 
-                request(app.listen())
-                    [m]('/hello')
+                request(app.listen())[m]('/hello')
                     .expect(200)
-                    .expect(m == 'head' ? '' : 'world')
+                    .expect(m === 'head' ? '' : 'world')
                     .end(done);
-            })
+            });
         });
         methods.forEach(m => {
             it(`should work with ${m} and no path`, (done) => {
@@ -193,65 +188,61 @@ describe('Koa-66', () => {
 
                 app.use(router.routes());
 
-                request(app.listen())
-                    [m]('/')
+                request(app.listen())[m]('/')
                     .expect(200)
-                    .expect(m == 'head' ? '' : 'world')
+                    .expect(m === 'head' ? '' : 'world')
                     .end(done);
-            })
+            });
         });
 
         it('should work with all', (done) => {
-          const app = new Koa();
-          const router = new Router();
-          let remained = methods.length
+            const app = new Koa();
+            const router = new Router();
+            let remained = methods.length;
 
-          router.all('/hello', ctx => ctx.body = 'world');
+            router.all('/hello', ctx => ctx.body = 'world');
 
-          app.use(router.routes());
+            app.use(router.routes());
 
-          methods.forEach((m, index) => {
-            request(app.listen())
-                [m]('/hello')
-                .expect(200)
-                .expect(m == 'head' ? '' : 'world')
-                .end((err) => {
-                  if (err) done(err);
-                  else if (--remained === 0) done();
-                });
-          });
+            methods.forEach(m => {
+                request(app.listen())[m]('/hello')
+                    .expect(200)
+                    .expect(m === 'head' ? '' : 'world')
+                    .end((err) => {
+                        if (err) done(err);
+                        else if (--remained === 0) done();
+                    });
+            });
         });
 
         it('should work with all without path', (done) => {
-          const app = new Koa();
-          const router = new Router();
-          let remained = methods.length
+            const app = new Koa();
+            const router = new Router();
+            let remained = methods.length;
 
-          router.all(ctx => ctx.body = 'world');
+            router.all(ctx => ctx.body = 'world');
 
-          app.use(router.routes());
+            app.use(router.routes());
 
-          methods.forEach((m, index) => {
-            request(app.listen())
-                [m]('/')
-                .expect(200)
-                .expect(m == 'head' ? '' : 'world')
-                .end((err) => {
-                  if (err) done(err);
-                  else if (--remained === 0) done();
-                });
-          });
+            methods.forEach(m => {
+                request(app.listen())[m]('/')
+                    .expect(200)
+                    .expect(m === 'head' ? '' : 'world')
+                    .end((err) => {
+                        if (err) done(err);
+                        else if (--remained === 0) done();
+                    });
+            });
         });
     });
 
 
     describe('mount()', () => {
-
         it('should throw if no a koa-66 instance', done => {
             const router = new Router();
-            (()=>router.mount('/', {})).should.throw('require a Koa66 instance');
+            (() => router.mount('/', {})).should.throw('require a Koa66 instance');
             done();
-        })
+        });
 
         it('.mount should 200 with correct path', done => {
             const app = new Koa();
@@ -260,7 +251,7 @@ describe('Koa-66', () => {
 
             router.get('/', ctx => ctx.body = 'world');
 
-            router2.mount('/hello', router)
+            router2.mount('/hello', router);
 
             app.use(router2.routes());
 
@@ -278,13 +269,13 @@ describe('Koa-66', () => {
             const router = new Router();
 
             router.get('/:id', ctx => {
-              ctx.body = 'world';
-              ctx.route.path.should.be.equal('/api/v1/ticket/:id');
+                ctx.body = 'world';
+                ctx.route.path.should.be.equal('/api/v1/ticket/:id');
             });
 
             apiRouter.mount('/ticket', router);
             rootRouter.mount('/api/v1', apiRouter);
-            //Must be the last
+            // Must be the last
             app.use(rootRouter.routes());
 
             request(app.listen())
@@ -301,7 +292,7 @@ describe('Koa-66', () => {
 
             router.get('/', ctx => ctx.body = 'world');
 
-            router2.mount('/hello', router)
+            router2.mount('/hello', router);
 
             app.use(router2.routes());
 
@@ -317,13 +308,13 @@ describe('Koa-66', () => {
             const router2 = new Router();
 
             router.use((ctx, next) => {
-                ctx.body = 'hello'
+                ctx.body = 'hello';
                 next();
-            })
+            });
 
             router.get('/', ctx => ctx.body += 'world');
 
-            router2.mount('/hello', router)
+            router2.mount('/hello', router);
 
             app.use(router2.routes());
 
@@ -340,14 +331,14 @@ describe('Koa-66', () => {
             const router2 = new Router();
 
             router.use((ctx, next) => {
-                ctx.body = 'hello'
+                ctx.body = 'hello';
                 next();
-            })
+            });
 
             router.get('/', ctx => ctx.body += 'world');
             router2.get('/', ctx => ctx.body += 'pouet');
 
-            router2.mount('/hello', router)
+            router2.mount('/hello', router);
 
             app.use(router2.routes());
 
@@ -360,7 +351,6 @@ describe('Koa-66', () => {
     });
 
     describe('URL parameters', () => {
-
         it('url params', done => {
             const app = new Koa();
             const router = new Router();
@@ -368,7 +358,7 @@ describe('Koa-66', () => {
 
             router.get('/:two/test', ctx => ctx.body = ctx.params);
 
-            router2.mount('/:one', router)
+            router2.mount('/:one', router);
 
             app.use(router2.routes());
 
@@ -384,13 +374,12 @@ describe('Koa-66', () => {
     });
 
     describe('multiple middleware', () => {
-
         it('200 with complete body and multiple routes', done => {
             const app = new Koa();
             const router = new Router();
 
             router.get('/hello', (ctx, next) => {
-                ctx.body = 'wor'
+                ctx.body = 'wor';
                 next();
             });
 
@@ -425,10 +414,9 @@ describe('Koa-66', () => {
             const router = new Router();
 
             router.get('/', [(ctx, next) => {
-                    ctx.body = 'hello';
-                    next();
-                },
-                ctx => ctx.body += 'world'
+                ctx.body = 'hello';
+                next();
+            }, ctx => ctx.body += 'world'
             ]);
 
             app.use(router.routes());
@@ -480,12 +468,11 @@ describe('Koa-66', () => {
     });
 
     describe('HEAD, OPTIONS, 501 and 405', () => {
-
         it('should return 501 on not implemented methods', done => {
             const app = new Koa();
             const router = new Router();
 
-            router.get('/', ctx => {});
+            router.get('/', () => {});
             app.use(router.routes());
 
             request(app.listen())
@@ -497,14 +484,16 @@ describe('Koa-66', () => {
         it('throw option, should throw 501 on not implemented methods', done => {
             const app = new Koa();
             const router = new Router();
-            router.get('/', ctx => {});
+            router.get('/', () => {});
 
-            app.use(router.routes({throw: true}));
-            app.on('error', function(err) {
-                if (err.name == 'NotImplementedError' && err.statusCode == 501)
+            app.use(router.routes({
+                throw: true
+            }));
+            app.on('error', err => {
+                if (err.name === 'NotImplementedError' && err.statusCode === 501)
                     return done();
                 done(Error());
-            })
+            });
 
             request(app.listen())
                 .search('/')
@@ -515,10 +504,10 @@ describe('Koa-66', () => {
             const app = new Koa();
             const router = new Router();
 
-            router.use(ctx => {});
-            router.get('/', ctx => {});
-            router.get('/', ctx => {});
-            router.put('/', ctx => {});
+            router.use(() => {});
+            router.get('/', () => {});
+            router.get('/', () => {});
+            router.put('/', () => {});
             app.use(router.routes());
 
             request(app.listen())
@@ -534,19 +523,19 @@ describe('Koa-66', () => {
         it('throw option, should throw 405 on not allowed methods with headers', done => {
             const app = new Koa();
             const router = new Router();
-            router.get('/', ctx => {});
-            router.get('/', ctx => {});
-            router.put('/', ctx => {});
+            router.get('/', () => {});
+            router.get('/', () => {});
+            router.put('/', () => {});
 
-            app.use(router.routes({throw: true}));
+            app.use(router.routes({
+                throw: true
+            }));
 
-            app.on('error', function(err) {
-                if (err.name == 'MethodNotAllowedError'
-                    && err.statusCode == 405
-                    && err.headers && err.headers.allow && err.headers.allow === 'HEAD, GET, PUT')
+            app.on('error', err => {
+                if (err.name === 'MethodNotAllowedError' && err.statusCode === 405 && err.headers && err.headers.allow && err.headers.allow === 'HEAD, GET, PUT')
                     return done();
                 done(Error());
-            })
+            });
 
             request(app.listen())
                 .post('/')
@@ -579,20 +568,19 @@ describe('Koa-66', () => {
                 .expect(204)
                 .end(done);
         });
-    })
+    });
 
     describe('param()', () => {
-
         it('should throw if key is not a string', done => {
             const router = new Router();
-            (()=>router.param()).should.throw('usage: param(string, function)');
+            (() => router.param()).should.throw('usage: param(string, function)');
             done();
-        })
+        });
         it('should throw if fn is not a function', done => {
             const router = new Router();
-            (()=>router.param('')).should.throw('usage: param(string, function)');
+            (() => router.param('')).should.throw('usage: param(string, function)');
             done();
-        })
+        });
 
         // param() test taken from koa-router
         it('param should be resolve', done => {
@@ -614,7 +602,7 @@ describe('Koa-66', () => {
                 .end(done);
         });
 
-         it('param should not be resolve', done => {
+        it('param should not be resolve', done => {
             const app = new Koa();
             const router = new Router();
 
@@ -703,20 +691,18 @@ describe('Koa-66', () => {
             const app = new Koa();
             const router = new Router();
             router
-                .param('user', (ctx, next, id) => {
+                .param('user', (ctx, next) => {
                     ctx.user = {
                         name: 'alex'
                     };
-                    if (ctx.ranFirst) {
+                    if (ctx.ranFirst)
                         ctx.user.ordered = 'parameters';
-                    }
                     next();
                 })
-                .param('first', (ctx, next, id) => {
+                .param('first', (ctx, next) => {
                     ctx.ranFirst = true;
-                    if (ctx.user) {
+                    if (ctx.user)
                         ctx.ranFirst = false;
-                    }
                     next();
                 })
                 .get('/:first/users/:user', ctx => {
@@ -734,30 +720,29 @@ describe('Koa-66', () => {
                 })
                 .end(done);
         });
-
-
     });
 
     describe('plugins', () => {
-
         it('should throw if name is not a string', done => {
             const router = new Router();
-            (()=>router.plugin()).should.throw('usage: plugin(string, function)');
+            (() => router.plugin()).should.throw('usage: plugin(string, function)');
             done();
-        })
+        });
 
         it('should work', done => {
             const app = new Koa();
             const router = new Router();
 
-            router.plugin('test', (ctx, next, params) => {
+            router.plugin('test', (ctx, next) => {
                 ctx.body = 'hello';
                 return next();
-            })
+            });
 
-            router.get('/', {test: true}, ctx => {
+            router.get('/', {
+                test: true
+            }, ctx => {
                 ctx.body += 'world';
-            })
+            });
 
             app.use(router.routes());
 
@@ -772,12 +757,13 @@ describe('Koa-66', () => {
             const app = new Koa();
             const router = new Router();
 
-            router.plugin('test', (ctx, next, params) => {
-            })
+            router.plugin('test', () => {});
 
-            router.get('/', {test: true}, ctx => {
+            router.get('/', {
+                test: true
+            }, ctx => {
                 ctx.body = 'world';
-            })
+            });
 
             app.use(router.routes());
 
@@ -791,18 +777,20 @@ describe('Koa-66', () => {
             const app = new Koa();
             const router = new Router();
 
-            router.plugin('test', (ctx, next, params) => {
+            router.plugin('test', (ctx, next) => {
                 ctx.body = 'hello';
                 return next();
-            })
-            router.plugin('test2', (ctx, next, params) => {
+            });
+            router.plugin('test2', (ctx, next) => {
                 ctx.body += 'world';
                 return next();
-            })
+            });
 
 
-            router.get('/', {test: true, test2:true}, ctx => {
-            })
+            router.get('/', {
+                test: true,
+                test2: true
+            }, () => {});
 
             app.use(router.routes());
 
@@ -818,13 +806,14 @@ describe('Koa-66', () => {
             const router = new Router();
             const router2 = new Router();
 
-            router.get('/', {test:true}, ctx => {
-            })
+            router.get('/', {
+                test: true
+            }, () => {});
 
-            router2.plugin('test', (ctx, next, params) => {
+            router2.plugin('test', (ctx, next) => {
                 ctx.body = 'world';
                 return next();
-            })
+            });
 
             router2.mount('/plop', router);
 
@@ -841,14 +830,16 @@ describe('Koa-66', () => {
             const app = new Koa();
             const router = new Router();
 
-            router.plugin('test', (ctx, next, params) => {
+            router.plugin('test', (ctx, next) => {
                 ctx.body = 'hello';
                 return next();
-            })
+            });
 
-            router.use({test: true})
+            router.use({
+                test: true
+            });
 
-            router.get('/', ctx => {})
+            router.get('/', () => {});
 
             app.use(router.routes());
 
@@ -866,24 +857,26 @@ describe('Koa-66', () => {
             const m1 = (ctx, next) => {
                 ctx.body = '1';
                 return next();
-            }
+            };
 
             const m2 = (ctx, next) => {
                 ctx.body += '2';
                 return next();
-            }
+            };
             const m3 = (ctx, next) => {
                 ctx.body += '3';
                 return next();
-            }
+            };
 
-            router.plugin('test',[m1, m2], m3);
+            router.plugin('test', [m1, m2], m3);
 
-            router.use({test: true})
+            router.use({
+                test: true
+            });
 
             router.get('/', ctx => {
                 ctx.body += '4';
-            })
+            });
 
             app.use(router.routes());
 
@@ -892,10 +885,8 @@ describe('Koa-66', () => {
                 .expect(200)
                 .expect('1234')
                 .end(done);
-
         });
-
-    })
+    });
 
     describe('sanitizePath', () => {
         const router = new Router();
@@ -904,37 +895,36 @@ describe('Koa-66', () => {
             const path = router.sanitizePath();
             path.should.be.equal('/');
             done();
-        })
+        });
         it('should return /pouet with pouet path', done => {
             const path = router.sanitizePath('pouet');
             path.should.be.equal('/pouet');
             done();
-        })
+        });
         it('should return /pouet with ////pouet path', done => {
             const path = router.sanitizePath('////pouet');
             path.should.be.equal('/pouet');
             done();
-        })
+        });
         it('should return /pouet with pouet//// path', done => {
             const path = router.sanitizePath('pouet////');
             path.should.be.equal('/pouet');
             done();
-        })
+        });
         it('should return /pouet with ////pouet//// path', done => {
             const path = router.sanitizePath('////pouet////');
             path.should.be.equal('/pouet');
             done();
-        })
+        });
         it('should return /pouet/pouet with ////pouet/pouet/// path', done => {
             const path = router.sanitizePath('////pouet/pouet///');
             path.should.be.equal('/pouet/pouet');
             done();
-        })
+        });
         it('should return /pouet/pouet with ////pouet/////pouet/// path', done => {
             const path = router.sanitizePath('////pouet////pouet///');
             path.should.be.equal('/pouet/pouet');
             done();
-        })
+        });
     });
-
 });
