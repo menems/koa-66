@@ -52,15 +52,14 @@ class Koa66 {
      * @api public
      */
     mount(prefix, router) {
-        if(!(router instanceof Koa66))
+        if (!(router instanceof Koa66))
             throw new TypeError('require a Koa66 instance');
 
         router.stacks.forEach(s => {
-            if(s.paramKey) {
+            if (s.paramKey)
                 this.register(s.methods, prefix + s.path, s.paramKey, s.middleware);
-            }else {
+            else
                 this.register(s.methods, prefix + s.path, s.middleware);
-            }
         });
         return this;
     }
@@ -73,9 +72,9 @@ class Koa66 {
      * @return {Object} Koa66 instance
      * @api public
      */
-    use(path, fn) {
+    use() {
         const args = Array.prototype.slice.call(arguments);
-        if (typeof args[0] !== 'string')
+        if (typeof args[0] != 'string')
             args.unshift('(.*)');
         args.unshift(false);
         return this.register.apply(this, args);
@@ -89,7 +88,7 @@ class Koa66 {
      * @return {Object}
      */
     param(key, fn) {
-        if(typeof key !== 'string' || typeof fn !== 'function')
+        if (typeof key != 'string' || typeof fn != 'function')
             throw new TypeError('usage: param(string, function)');
         return this.register(false, '(.*)', key, fn);
     }
@@ -102,17 +101,16 @@ class Koa66 {
      * @return {Object}
      */
     plugin(name) {
-
-        if(typeof name !== 'string')
+        if (typeof name != 'string')
             throw new TypeError('usage: plugin(string, function)');
 
-        const args  = Array.prototype.slice.call(arguments,1);
+        const args = Array.prototype.slice.call(arguments, 1);
 
         let middlewares = [];
         args.forEach(m => {
-            if ( util.isArray(m)) middlewares = middlewares.concat(m);
-            if ( typeof m == 'function') middlewares.push(m)
-        })
+            if (util.isArray(m)) middlewares = middlewares.concat(m);
+            if (typeof m == 'function') middlewares.push(m);
+        });
         this.plugs[name] = compose(middlewares);
         return this;
     }
@@ -124,11 +122,9 @@ class Koa66 {
      * @api public
      */
     routes(options) {
-
         options = options || {};
 
         return (ctx, next) => {
-
             const middlewares = [];
             const allowed = [];
             const paramMiddlewares = [];
@@ -142,17 +138,18 @@ class Koa66 {
                 ctx.route = route;
 
                 if (route.paramNames)
-                    ctx.params = this.parseParams(ctx.params, route.paramNames, ctx.path.match(route.regexp).slice(1))
+                    ctx.params = this.parseParams(ctx.params, route.paramNames, ctx.path.match(route.regexp).slice(1));
 
-                if (route.paramKey)
-                    return paramMiddlewares[route.paramKey] = (ctx, next) =>
+                if (route.paramKey) {
+                    paramMiddlewares[route.paramKey] = (ctx, next) =>
                         route.middleware(ctx, next, ctx.params[route.paramKey]);
+                    return;
+                }
 
                 if ( typeof route.middleware === 'object') {
                     for (let i in route.middleware) {
                         if ( this.plugs[i])
-                            middlewares.push( (ctx, next) =>
-                                this.plugs[i](ctx, next, route.middleware[i]));
+                            middlewares.push((ctx, next) => this.plugs[i](ctx, next, route.middleware[i]));
                     }
                     return;
                 }
@@ -187,22 +184,22 @@ class Koa66 {
             if (!matched) {
                 // automatic OPTIONS response
                 if (ctx.method === 'OPTIONS') {
-                    ctx.status = 204
+                    ctx.status = 204;
                     return next();
                 }
 
                 const _allowed = allowed.filter((value, index, self) => self.indexOf(value) === index).join(', ');
 
                 if (options.throw)
-                    ctx.throw(405, {headers: {allow : _allowed}});
+                    ctx.throw(405, {headers: {allow: _allowed}});
                 ctx.status = 405;
                 ctx.set('Allow', _allowed);
                 return next();
             }
 
             const _params = [];
-            for(let i in ctx.params) {
-                if( paramMiddlewares[i])
+            for (let i in ctx.params) {
+                if (paramMiddlewares[i])
                     _params.push(paramMiddlewares[i]);
             }
 
@@ -217,17 +214,16 @@ class Koa66 {
      * @return {[Functions]...}  middleware
      */
     all() {
-      const args = Array.prototype.slice.call(arguments);
+        const args = Array.prototype.slice.call(arguments);
 
-      if (typeof args[0] !== 'string')
-            args.unshift('/')
+        if (typeof args[0] != 'string') args.unshift('/');
 
-      args.unshift(methods);
-      return this.register.apply(this, args);
+        args.unshift(methods);
+        return this.register.apply(this, args);
     }
 
     sanitizePath(path) {
-        if(!path) return '/';
+        if (!path) return '/';
 
         return '/' + path
             .replace(/^\/+/i, '')
@@ -252,9 +248,8 @@ class Koa66 {
         if (typeof arguments[2] === 'string') {
             paramKey = arguments[2];
             middlewares = Array.prototype.slice.call(arguments, 3);
-        } else {
+        } else
             middlewares = Array.prototype.slice.call(arguments, 2);
-        }
 
         if (!middlewares.length)
             throw new Error('middleware is required');
@@ -269,7 +264,7 @@ class Koa66 {
                 throw new TypeError('middleware must be a function');
 
             const keys = [];
-            path = (!path || path === '(.*)' || util.isRegExp(path))? path : this.sanitizePath(path);
+            path = (!path || path === '(.*)' || util.isRegExp(path)) ? path : this.sanitizePath(path);
             const regexp = pathToRegexp(path, keys);
 
             const route = {
@@ -307,7 +302,7 @@ class Koa66 {
             }
         }
         return params;
-    };
+    }
 }
 
 /**
@@ -328,6 +323,6 @@ methods.forEach(method => {
     };
 });
 
-Koa66.prototype.del = Koa66.prototype['delete'];
+Koa66.prototype.del = Koa66.prototype.delete;
 
 module.exports = Koa66;

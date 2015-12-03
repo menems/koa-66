@@ -1,0 +1,8 @@
+node_modules
+ressources
+www/webarch
+www/vendors
+www/assets/webarch
+www/assets/js/*.js
+www/assets/js/*.map
+build
