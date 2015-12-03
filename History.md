@@ -1,4 +1,12 @@
 
+v0.8.0 / 2015-12-03
+===================
+
+  * chores: lint test
+  * feat: remove del , no more reserved word
+  * chores: lint
+  * chore: typo
+
 v0.7.3 / 2015-11-23
 ===================
 
