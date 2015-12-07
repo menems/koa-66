@@ -152,7 +152,7 @@ class Koa66 {
                             middlewares.push((ctx, next) => {
                                 ctx.state.plugins = ctx.state.plugins || {};
                                 ctx.state.plugins[i] = route.middleware[i];
-                                this.plugs[i](ctx, next);
+                                return this.plugs[i](ctx, next);
                             });
                         }
                     }
