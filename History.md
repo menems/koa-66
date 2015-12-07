@@ -1,4 +1,9 @@
 
+v0.8.2 / 2015-12-07
+===================
+
+  * fix: remove instanceof test on mount. (too many problem with npm link and different version)
+
 v0.8.1 / 2015-12-07
 ===================
 
