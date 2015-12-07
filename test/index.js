@@ -753,6 +753,28 @@ describe('Koa-66', () => {
                 .end(done);
         });
 
+        it('should pass object in options', done => {
+            const app = new Koa();
+            const router = new Router();
+
+            router.plugin('test', (ctx, next) => {
+                ctx.body = ctx.state.plugins.test;
+                return next();
+            });
+
+            router.get('/', {
+                test: [1, 2]
+            }, () => {});
+
+            app.use(router.routes());
+
+            request(app.listen())
+                .get('/')
+                .expect(200)
+                .expect([1, 2])
+                .end(done);
+        });
+
         it('should stop without next', done => {
             const app = new Koa();
             const router = new Router();

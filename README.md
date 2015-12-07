@@ -113,21 +113,22 @@ Why? Because I am lazy to require some middleware in all my router script with g
 
 So I decided to add the possibility to inject an object at first parameter (that will be a config object) and adding an extra middleware that will be inject in middleware stack. To register this plugin just use a `plugin()`method.
 
-> I will probably pass options on ctx.state object on next version
-
 ```javascript
 const Router = require('koa-66');
 const main = new Router();
 
 // you can use multiple middleware as arguments or array
-main.plugin('authent', (ctx, next, options) => {
+main.plugin('authent', (ctx, next) => {
+    // pick plugin config object on ctx.state.plugins.
+    // here ctx.state.plugins.authent === true;
 	// do stuff inject user on context for example
 	return next();
 	//or throw or do nothing that will stop execution of router stack
 })
 
-main.plugin('acl', (ctx, next, options) => {
-	// do stuff check role via options object for example
+main.plugin('acl', (ctx, next) => {
+    // here ctx.state.plugins.acl === ['admin'];
+	// do stuff check role via ctx.state.plugins.acl for example
 	return next();
 	//or throw or do nothing that will stop execution of router stack
 })

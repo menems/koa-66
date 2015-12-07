@@ -148,8 +148,13 @@ class Koa66 {
 
                 if ( typeof route.middleware === 'object') {
                     for (let i in route.middleware) {
-                        if ( this.plugs[i])
-                            middlewares.push((ctx, next) => this.plugs[i](ctx, next, route.middleware[i]));
+                        if ( this.plugs[i]) {
+                            middlewares.push((ctx, next) => {
+                                ctx.state.plugins = ctx.state.plugins || {};
+                                ctx.state.plugins[i] = route.middleware[i];
+                                this.plugs[i](ctx, next);
+                            });
+                        }
                     }
                     return;
                 }
