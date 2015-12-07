@@ -52,7 +52,7 @@ class Koa66 {
      * @api public
      */
     mount(prefix, router) {
-        if (!(router instanceof Koa66))
+        if (typeof router != 'object')
             throw new TypeError('require a Koa66 instance');
 
         router.stacks.forEach(s => {

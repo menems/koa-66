@@ -240,7 +240,7 @@ describe('Koa-66', () => {
     describe('mount()', () => {
         it('should throw if no a koa-66 instance', done => {
             const router = new Router();
-            (() => router.mount('/', {})).should.throw('require a Koa66 instance');
+            (() => router.mount('/', 1)).should.throw('require a Koa66 instance');
             done();
         });
 
