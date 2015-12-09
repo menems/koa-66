@@ -1,4 +1,9 @@
 
+v0.8.4 / 2015-12-09
+===================
+
+  * Call param() middleware before the first actual match.
+
 v0.8.3 / 2015-12-07
 ===================
 
