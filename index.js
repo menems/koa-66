@@ -170,6 +170,11 @@ class Koa66 {
                 if ((route.methods.indexOf(ctx.method) !== -1) ||
                     (ctx.method === 'HEAD' && route.methods.indexOf('GET') !== -1)) {
                     matched = true;
+                    for (let i in ctx.params) {
+                        if (paramMiddlewares[i])
+                            middlewares.push(paramMiddlewares[i]);
+                            delete paramMiddlewares[i]
+                    }
                     middlewares.push(route.middleware);
                 }
             });
@@ -202,13 +207,7 @@ class Koa66 {
                 return next();
             }
 
-            const _params = [];
-            for (let i in ctx.params) {
-                if (paramMiddlewares[i])
-                    _params.push(paramMiddlewares[i]);
-            }
-
-            return compose(_params.concat(middlewares))(ctx, next);
+            return compose(middlewares)(ctx, next);
         };
     }
 

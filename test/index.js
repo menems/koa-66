@@ -720,6 +720,36 @@ describe('Koa-66', () => {
                 })
                 .end(done);
         });
+
+        it('doesn\'t run parameter middleware if path matched does not have a parameter', done => {
+            const app = new Koa();
+            const router = new Router();
+            router.param('id', (ctx, next, id) => {
+                ctx.ranParam = 'true';
+                next();
+            });
+
+            router.get('/test', ctx => {
+                ctx.body = ctx.ranParam || 'false'
+            });
+            router.get('/:id', ctx => {
+                ctx.body = ctx.ranParam || 'false'
+            });
+            app.use(router.routes());
+
+            request(app.listen())
+            .get('/test')
+            .expect(200)
+            .expect('false')
+            .end((err) => {
+                if (err) return done(err);
+                request(app.listen())
+                .get('/not-test')
+                .expect(200)
+                .expect('true')
+                .end(done);
+            });
+        });
     });
 
     describe('plugins', () => {
