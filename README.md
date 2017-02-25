@@ -26,12 +26,16 @@ Router middleware for [koa](https://github.com/koajs/koa/tree/v2.x) v2.
 ## Installation
 
 ```bash
-# npm install koa-66
+# with npm
+$ npm install koa-66
+
+$ with yarn
+$ yarn add koa-66
 ```
 
 ## Example
 
-```js
+```javascript
 const Koa = require('koa');
 const Router = require('koa-66');
 const app = new Koa();
@@ -69,6 +73,7 @@ app.listen(1664);
 ```
 
 ## Example with __throw__ option
+
 ```javascript
 const Koa = require('koa');
 const Router = require('koa-66');
@@ -80,7 +85,7 @@ app.use(async function(ctx, next) {
 	try {
 		await next();
 	}catch(e){
-		if(e.status === 405) {
+		if (e.status === 405) {
 			ctx.status = 405;
 			ctx.set(e.headers);
 		}
