@@ -1,6 +1,6 @@
 {
   "name": "koa-66",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Router middleware for koa v2",
   "main": "index.js",
   "repository": {
