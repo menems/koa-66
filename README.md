@@ -6,7 +6,7 @@
 [![Dependency Status][dep-image]][dep-url]
 [![Coverage Status][cov-img]][cov-url]
 
-Router middleware for [koa](https://github.com/koajs/koa/tree/v2.x) v2.
+Router middleware for [koa](https://github.com/koajs/koa/) v2.
 
 > feedbacks are welcome
 
